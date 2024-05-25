@@ -1,8 +1,13 @@
 import Flight from "@/models/Flight";
+import { json } from "stream/consumers";
 
 export const getAllFlights = async (req: Request) => {
   try {
-    const flight = await Flight.find();
+    const flight = await Flight.find()
+      .populate("departureAirport")
+      .populate("arrivalAirport")
+      .populate("aircraft");
+    console.log("flight:", JSON.stringify(flight));
     return new Response(JSON.stringify(flight), {
       status: 200,
       headers: {
@@ -66,6 +71,7 @@ export const createFlight = async (req: Request) => {
       departureTime,
       arrivalTime,
       aircraft,
+      status
     } = await req.json();
 
     const newFlight = new Flight({
@@ -75,6 +81,7 @@ export const createFlight = async (req: Request) => {
       departureTime,
       arrivalTime,
       aircraft,
+      status
     });
     await newFlight.save();
 

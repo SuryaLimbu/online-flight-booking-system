@@ -12,3 +12,5 @@ export async function DELETE(req: Request) {
   await connectDB();
   return deleteFlight(req);
 }
+
+
