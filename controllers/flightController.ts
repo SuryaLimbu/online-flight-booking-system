@@ -1,8 +1,13 @@
 import Flight from "@/models/Flight";
+import { URL } from "url";
 
 export const getAllFlights = async (req: Request) => {
   try {
-    const flight = await Flight.find();
+    const flight = await Flight.find()
+     .populate("departureAirport")
+     .populate("arrivalAirport")
+     .populate("aircraft");
+    console.log("flight:", JSON.stringify(flight));
     return new Response(JSON.stringify(flight), {
       status: 200,
       headers: {
@@ -57,6 +62,47 @@ export const getFlightById = async (req: Request) => {
   }
 };
 
+export const specificFlightData = async (req: Request) => {
+  const { searchParams } = new URL(req.url);
+  const from = searchParams.get("from");
+  const to = searchParams.get("to");
+  const departureDate = searchParams.get("departureDate")+"T00:00:00.000Z";
+  const cabinClass = searchParams.get("cabinClass");
+  const totalTravelers = searchParams.get("totalTravelers");
+
+  const newDataTypeConverter = new Date(departureDate);
+
+  // console.log("searchParams: ", newDataTypeConverter);
+
+  if (!from || !to || !departureDate || !cabinClass || !totalTravelers) {
+    return Response.json(
+      { error: "Missing required query parameters" },
+      { status: 400 }
+    );
+  }
+
+  try {
+    const flights = await Flight.find({
+      departureAirport: from,
+      arrivalAirport: to,
+      departureTime: newDataTypeConverter
+    })
+      .populate("departureAirport")
+      .populate("arrivalAirport")
+      .populate("aircraft");
+
+      // console.log("flights from searchflight api:", JSON.stringify(flights));
+
+    return Response.json(flights, { status: 200 });
+  } catch (error) {
+    console.error("Error fetching flights:", error);
+    return Response.json(
+      { error: "Failed to fetch flight data" },
+      { status: 500 }
+    );
+  }
+};
+
 export const createFlight = async (req: Request) => {
   try {
     const {
@@ -66,6 +112,7 @@ export const createFlight = async (req: Request) => {
       departureTime,
       arrivalTime,
       aircraft,
+      status,
     } = await req.json();
 
     const newFlight = new Flight({
@@ -75,6 +122,7 @@ export const createFlight = async (req: Request) => {
       departureTime,
       arrivalTime,
       aircraft,
+      status,
     });
     await newFlight.save();
 

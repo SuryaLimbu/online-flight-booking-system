@@ -16,12 +16,4 @@ export async function POST(req: Request) {
   return createAirport(req);
 }
 
-export async function PUT(req: Request) {
-  await connectDB();
-  return updateAirport(req);
-}
 
-export async function DELETE(req: Request) {
-  await connectDB();
-  return deleteAirport(req);
-}

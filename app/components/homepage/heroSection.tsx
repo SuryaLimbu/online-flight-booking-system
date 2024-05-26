@@ -1,8 +1,15 @@
 "use client";
 
-import React, { Children, useState } from "react";
+import React, {
+  ChangeEvent,
+  Children,
+  FormEvent,
+  useEffect,
+  useState,
+} from "react";
 import Image from "next/image";
 import hero1 from "@/public/Airplane.png";
+import styles from "./app.module.css";
 import {
   Tabs,
   Tab,
@@ -25,55 +32,152 @@ import {
   ModalFooter,
   ModalHeader,
   useDisclosure,
+  DateValue,
 } from "@nextui-org/react";
 
+interface IFormValue {
+  from: string;
+  to: string;
+  departureDate: string;
+
+  cabinClass: string;
+  totalTravelers: number;
+}
+
+interface IAirport {
+  _id: string;
+  airportCode: string;
+  airportName: string;
+  location: string;
+}
 import { PiMagnifyingGlass } from "react-icons/pi";
-const HeroSection = () => {
+// import router, { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
+
+const HeroSection: React.FC = () => {
   const [adult, setAdult] = useState(1);
   const [child, setChild] = useState(0);
+  const [airports, setAirports] = useState<IAirport[]>([]);
 
-  const totalTravelers = adult + child;
-  const airports = [
-    { label: "Dubai", value: "DUB" },
-    { label: "London", value: "LON" },
-    { label: "Paris", value: "PAR" },
-    { label: "New York", value: "NYC" },
-    { label: "Tokyo", value: "TYO" },
-    { label: "Sydney", value: "SYD" },
-    { label: "Beijing", value: "PEK" },
-    { label: "Mumbai", value: "BOM" },
-    { label: "Bangkok", value: "BKK" },
-    { label: "Singapore", value: "SIN" },
-    { label: "Hong Kong", value: "HKG" },
-    { label: "Seoul", value: "SEL" },
-  ];
+  const [isSubmit, setIsSubmit] = useState(false);
+  const [formValues, setFormValues] = useState<IFormValue>({
+    from: "",
+    to: "",
+    departureDate: "",
+
+    cabinClass: "",
+    totalTravelers: 1,
+  });
+  const router = useRouter();
+  // calculate total travelers
+  const updateTotalTravelers = (newAdult: number, newChild: number) => {
+    const totalTravelers = newAdult + newChild;
+    setFormValues({
+      ...formValues,
+      totalTravelers,
+    });
+  };
+
+  const handleAdultChange = (change: number) => {
+    setAdult((prevAdult) => {
+      const newAdult = Math.max(1, prevAdult + change);
+      updateTotalTravelers(newAdult, child);
+      return newAdult;
+    });
+  };
+
+  const handleChildChange = (change: number) => {
+    setChild((prevChild) => {
+      const newChild = Math.max(0, prevChild + change);
+      updateTotalTravelers(adult, newChild);
+      return newChild;
+    });
+  };
+
   const cabinClasses = [
     { label: "Economy", value: "Economy" },
     { label: "Business", value: "Business" },
     { label: "Premium Economy", value: "Premium Economy" },
   ];
 
-  const ages = [
-    { label: "2", value: "2" },
-    { label: "3", value: "3" },
-    { label: "4", value: "4" },
-    { label: "5", value: "5" },
-    { label: "6", value: "6" },
-    { label: "7", value: "7" },
-    { label: "8", value: "8" },
-    { label: "9", value: "9" },
-    { label: "10", value: "10" },
-    { label: "11", value: "11" },
-    { label: "12", value: "12" },
-    { label: "13", value: "13" },
-    { label: "14", value: "14" },
-    { label: "15", value: "15" },
-  ];
+  const handleInputChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = event.target;
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+  const handleDateChange = (name: string, value: DateValue | null) => {
+    setFormValues({
+      ...formValues,
+      [name]: value,
+    });
+  };
+
+  useEffect(() => {
+    if (isSubmit) {
+      console.log("submit button clicked");
+      const {
+        from,
+        to,
+        departureDate,
+
+        cabinClass,
+        totalTravelers,
+      } = formValues;
+      const query = {
+        from,
+        to,
+        departureDate: departureDate,
+        cabinClass,
+        totalTravelers: totalTravelers.toString(),
+      };
+      // console.log("query: ", query);
+      // router.push(`/flights?query=${JSON.stringify(query)}`);
+      router.push(
+        `/flights?from=${from}&to=${to}&departureDate=${departureDate}&cabinClass=${cabinClass}&totalTravelers=${totalTravelers}`
+      );
+      // router.push(`/flights?query=${query}`);
+
+      setIsSubmit(false);
+    }
+    const fetchAirports = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/airports`
+      );
+      const data = await response.json();
+      // console.log("data: ", data);
+      setAirports(data);
+    };
+    fetchAirports();
+  }, [isSubmit]);
+  console.log("airports: ", airports);
+
+  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setIsSubmit(true);
+    // console.log("Form Values:", formValues);
+    // const { from, to, departureDate, returnDate, cabinClass, totalTravelers } =
+    //   formValues;
+    // const query = {
+    //   from,
+    //   to,
+    //   departureDate: departureDate?.toString() || "",
+    //   returnDate: returnDate?.toString() || "",
+    //   cabinClass,
+    //   totalTravelers: totalTravelers.toString(),
+    // };
+
+    // Perform any additional actions with form values, e.g., send to an API
+  };
+
   const { isOpen, onOpen, onOpenChange } = useDisclosure();
   return (
-    <div className=" w-full h-screen">
+    <div className="flex-col w-full h-screen">
       {/* <Image src={hero1} alt="hero1" className="absolute -z-40 top-0 w-full" /> */}
-      <div className="flex-cols align-middle ">
+      <div className="flex-cols align-middle mb-8">
         <h1 className=" text-4xl font-bold text-black">
           Book your flight with us
         </h1>
@@ -84,7 +188,7 @@ const HeroSection = () => {
       <div>
         <Tabs aria-label="Options">
           <Tab key="flight" title="Flight">
-            <Card>
+            <Card className="shadow-none border">
               <CardBody className="">
                 <div className="pb-4">
                   <RadioGroup
@@ -93,51 +197,68 @@ const HeroSection = () => {
                     defaultValue={"one way"}
                   >
                     {" "}
-                    <Radio value="one way" >One way</Radio>
-                    <Radio value="round trip" isDisabled>Round trip</Radio>
-                    <Radio value="multi city" isDisabled>Multi city</Radio>
+                    <Radio value="one way">One way</Radio>
+                    <Radio value="round trip" isDisabled>
+                      Round trip
+                    </Radio>
+                    <Radio value="multi city" isDisabled>
+                      Multi city
+                    </Radio>
                   </RadioGroup>
                 </div>
-                <form className="sm:flex sm:gap-x-4 gap-y-4  items-center">
+                <form
+                  className="sm:flex sm:gap-x-4 gap-y-4  items-center"
+                  onSubmit={handleSubmit}
+                >
                   <Select
                     items={airports}
                     label="From"
+                    name="from"
                     placeholder="Select your departure airport"
                     className="max-w-xs"
+                    value={formValues.from}
+                    onChange={handleInputChange}
                   >
-                    {(airport) => (
-                      <SelectItem key={airport.value}>
-                        {airport.label}
+                    {airports.map((airport) => (
+                      <SelectItem key={airport._id}>
+                        {airport.airportName}
                       </SelectItem>
-                    )}
+                    ))}
                   </Select>
 
                   <Select
                     items={airports}
                     label="To"
+                    name="to"
                     placeholder="Select your arrival airport"
                     className="max-w-xs"
+                    value={formValues.to}
+                    onChange={handleInputChange}
                   >
-                    {(airport) => (
-                      <SelectItem key={airport.value}>
-                        {airport.label}
+                    {airports.map((airport) => (
+                      <SelectItem key={airport._id}>
+                        {airport.airportName}
                       </SelectItem>
-                    )}
+                    ))}
                   </Select>
-                  <DatePicker label="Departure" className="max-w-[284px]" />
-                  {/* <DatePicker label="Return" className="max-w-[284px]" /> */}
-                  {/* <Input label="Adults" className="max-w-[284px]" />
-                  <Input label="Children" className="max-w-[284px]" />
-                  <Input label="Infants" className="max-w-[284px]" />
-                  <Input label="Bags" className="max-w-[284px]" /> */}
-                  {/* dropdown */}
+                  <Input
+                    type="date"
+                    label="Departure"
+                    className="max-w-[284px]"
+                    name="departureDate"
+                    value={formValues.departureDate}
+                    onChange={handleInputChange}
+                  />
 
                   <Select
                     items={cabinClasses}
                     label="Cabin Class"
+                    name="cabinClass"
                     placeholder="Select Cabin Class"
                     className="max-w-xs"
                     defaultSelectedKeys={["Economy"]}
+                    value={formValues.cabinClass}
+                    onChange={handleInputChange}
                   >
                     {(cabinClass) => (
                       <SelectItem key={cabinClass.value}>
@@ -146,7 +267,7 @@ const HeroSection = () => {
                     )}
                   </Select>
                   <Button
-                    className=" text-primary"
+                    className="text-primary"
                     color="primary"
                     variant="flat"
                     size="lg"
@@ -174,8 +295,8 @@ const HeroSection = () => {
                                     size="sm"
                                     color="primary"
                                     className="text-white"
-                                    onClick={() => setAdult(adult + 1)}
-                                    disabled={totalTravelers >= 6}
+                                    onClick={() => handleAdultChange(1)}
+                                    disabled={formValues.totalTravelers >= 6}
                                   >
                                     +
                                   </Button>
@@ -207,8 +328,8 @@ const HeroSection = () => {
                                     size="sm"
                                     color="primary"
                                     className="text-white"
-                                    onClick={() => setChild(child + 1)}
-                                    disabled={totalTravelers >= 6}
+                                    onClick={() => handleChildChange(1)}
+                                    disabled={formValues.totalTravelers >= 6}
                                   >
                                     +
                                   </Button>
@@ -256,7 +377,12 @@ const HeroSection = () => {
                     </ModalContent>
                   </Modal>
 
-                  <Button className=" text-white" color="primary" size="lg">
+                  <Button
+                    className=" text-white"
+                    color="primary"
+                    size="lg"
+                    type="submit"
+                  >
                     Search
                   </Button>
                 </form>

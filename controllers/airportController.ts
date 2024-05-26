@@ -21,7 +21,19 @@ export const getAllAirports = async (req: Request) => {
 
 export const getAirportById = async (req: Request) => {
   try {
-    const { id } = await req.json();
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Aircraft ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     const airport = await Airport.findById(id);
     return new Response(JSON.stringify(airport), {
       status: 200,
@@ -68,8 +80,50 @@ export const createAirport = async (req: Request) => {
 
 export const updateAirport = async (req: Request) => {
   try {
-    const { id } = await req.json();
-    const airport = await Airport.findByIdAndUpdate(id, req.json());
+    const url = new URL(req.url);
+    const _id = url.pathname.split("/").pop();
+    // console.log("Updating airport with ID:", _id);
+    
+    if (!_id) {
+      return new Response(
+        JSON.stringify({ message: "Aircraft ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const { airportCode, airportName, location } = await req.json();
+    if (!airportCode || !airportName || !location) {
+      return new Response(
+        JSON.stringify({ message: "All fields are required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const updateFields = {
+      airportCode,
+      airportName,
+      location,
+    };
+
+    const airport = await Airport.findByIdAndUpdate(_id, updateFields, { new: true });
+    if (!airport) {
+      return new Response(
+        JSON.stringify({ message: "Airport not found" }),
+        {
+          status: 404,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
+    }
+
     return new Response(JSON.stringify(airport), {
       status: 200,
       headers: {
@@ -77,7 +131,8 @@ export const updateAirport = async (req: Request) => {
       },
     });
   } catch (error) {
-    return new Response(JSON.stringify(error), {
+    console.error("Error updating airport:", error);
+    return new Response(JSON.stringify({ error}), {
       status: 500,
       headers: {
         "Content-Type": "application/json",
@@ -88,7 +143,19 @@ export const updateAirport = async (req: Request) => {
 
 export const deleteAirport = async (req: Request) => {
   try {
-    const { id } = await req.json();
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Airport ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     const airport = await Airport.findByIdAndDelete(id);
     return new Response(JSON.stringify(airport), {
       status: 200,

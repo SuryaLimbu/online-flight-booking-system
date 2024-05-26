@@ -1,4 +1,5 @@
 import User from "@/models/User";
+import bcrypt from "bcrypt";
 
 export const getAllUsers = async (req: Request) => {
   try {
@@ -68,16 +69,18 @@ export const createUser = async (req: Request) => {
       nationality,
       passportNumber,
     } = await req.json();
-    
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
     const newUser = new User({
       firstName,
       lastName,
       email,
-      password,
+      password: hashedPassword,
       address,
       contactDetails,
       gender,
-      roleId,
+      roleId: roleId || "6651e05ac9cb224ec0045167",
       dateOfBirth,
       nationality,
       passportNumber,

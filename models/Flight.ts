@@ -7,6 +7,7 @@ interface IFlight extends Document {
   departureTime: Date;
   arrivalTime: Date;
   aircraft: mongoose.Schema.Types.ObjectId;
+  status: string;
 }
 
 const flightSchema = new mongoose.Schema({
@@ -35,6 +36,10 @@ const flightSchema = new mongoose.Schema({
   aircraft: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Aircraft",
+    required: true,
+  },
+  status: {
+    type: String,
     required: true,
   },
 });
