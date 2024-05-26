@@ -38,10 +38,17 @@ import {
 interface IFormValue {
   from: string;
   to: string;
-  departureDate: DateValue | null;
+  departureDate: string;
 
   cabinClass: string;
   totalTravelers: number;
+}
+
+interface IAirport {
+  _id: string;
+  airportCode: string;
+  airportName: string;
+  location: string;
 }
 import { PiMagnifyingGlass } from "react-icons/pi";
 // import router, { useRouter } from "next/router";
@@ -50,12 +57,13 @@ import { useRouter } from "next/navigation";
 const HeroSection: React.FC = () => {
   const [adult, setAdult] = useState(1);
   const [child, setChild] = useState(0);
+  const [airports, setAirports] = useState<IAirport[]>([]);
 
   const [isSubmit, setIsSubmit] = useState(false);
   const [formValues, setFormValues] = useState<IFormValue>({
     from: "",
     to: "",
-    departureDate: null,
+    departureDate: "",
 
     cabinClass: "",
     totalTravelers: 1,
@@ -85,20 +93,7 @@ const HeroSection: React.FC = () => {
       return newChild;
     });
   };
-  const airports = [
-    { label: "Dubai", value: "DUB" },
-    { label: "London", value: "LON" },
-    { label: "Paris", value: "PAR" },
-    { label: "New York", value: "NYC" },
-    { label: "Tokyo", value: "TYO" },
-    { label: "Sydney", value: "SYD" },
-    { label: "Beijing", value: "PEK" },
-    { label: "Mumbai", value: "BOM" },
-    { label: "Bangkok", value: "BKK" },
-    { label: "Singapore", value: "SIN" },
-    { label: "Hong Kong", value: "HKG" },
-    { label: "Seoul", value: "SEL" },
-  ];
+
   const cabinClasses = [
     { label: "Economy", value: "Economy" },
     { label: "Business", value: "Business" },
@@ -135,8 +130,7 @@ const HeroSection: React.FC = () => {
       const query = {
         from,
         to,
-        departureDate: departureDate?.toString() || "",
-
+        departureDate: departureDate,
         cabinClass,
         totalTravelers: totalTravelers.toString(),
       };
@@ -149,7 +143,17 @@ const HeroSection: React.FC = () => {
 
       setIsSubmit(false);
     }
+    const fetchAirports = async () => {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/airports`
+      );
+      const data = await response.json();
+      // console.log("data: ", data);
+      setAirports(data);
+    };
+    fetchAirports();
   }, [isSubmit]);
+  console.log("airports: ", airports);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -215,11 +219,11 @@ const HeroSection: React.FC = () => {
                     value={formValues.from}
                     onChange={handleInputChange}
                   >
-                    {(airport) => (
-                      <SelectItem key={airport.value}>
-                        {airport.label} 
+                    {airports.map((airport) => (
+                      <SelectItem key={airport._id}>
+                        {airport.airportName}
                       </SelectItem>
-                    )}
+                    ))}
                   </Select>
 
                   <Select
@@ -231,20 +235,19 @@ const HeroSection: React.FC = () => {
                     value={formValues.to}
                     onChange={handleInputChange}
                   >
-                    {(airport) => (
-                      <SelectItem key={airport.value}>
-                        {airport.label}
+                    {airports.map((airport) => (
+                      <SelectItem key={airport._id}>
+                        {airport.airportName}
                       </SelectItem>
-                    )}
+                    ))}
                   </Select>
-
-                  <DatePicker
+                  <Input
+                    type="date"
                     label="Departure"
                     className="max-w-[284px]"
+                    name="departureDate"
                     value={formValues.departureDate}
-                    onChange={(value) =>
-                      handleDateChange("departureDate", value)
-                    }
+                    onChange={handleInputChange}
                   />
 
                   <Select

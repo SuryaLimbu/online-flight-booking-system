@@ -2,14 +2,18 @@
   "name": "online-flight-booking-system",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "generateData": "ts-node utils/createDummyData.ts",
+    "generateSeatData": "ts-node utils/seatDummy.ts"
   },
   "dependencies": {
     "@nextui-org/react": "^2.3.6",
+    "bcrypt": "^5.1.1",
     "framer-motion": "^11.2.6",
     "mongoose": "^8.4.0",
     "next": "14.2.3",
@@ -19,11 +23,13 @@
     "react-icons": "^5.2.1"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/node": "^20",
     "@types/react": "^18",
     "@types/react-dom": "^18",
     "postcss": "^8",
     "tailwindcss": "^3.4.1",
+    "ts-node": "^10.9.2",
     "typescript": "^5"
   }
 }
