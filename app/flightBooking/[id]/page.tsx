@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 // import { AircraftSeating } from "./seatingPlan";
 import {AircraftSeating} from "./temp";
+import { Seat } from "./seat";
 
 interface SeatProps {
   sectionId: string;
@@ -32,34 +33,34 @@ interface SeatResponse {
   _id: string;
 }
 
-export function Seat({
-  rowNumber,
-  position,
-  status,
-  isSelected,
-  isDisabled,
-  onSeatClick,
-}: SeatProps) {
-  const seatClass = `h-20 w-20 text-center flex justify-center items-center text-white rounded-lg cursor-pointer ${
-    isSelected
-      ? "bg-blue-500"
-      : status === "reserved" || isDisabled
-      ? "bg-red-500 cursor-not-allowed"
-      : "bg-green-500"
-  }`;
+// export function Seat({
+//   rowNumber,
+//   position,
+//   status,
+//   isSelected,
+//   isDisabled,
+//   onSeatClick,
+// }: SeatProps) {
+//   const seatClass = `h-20 w-20 text-center flex justify-center items-center text-white rounded-lg cursor-pointer ${
+//     isSelected
+//       ? "bg-blue-500"
+//       : status === "reserved" || isDisabled
+//       ? "bg-red-500 cursor-not-allowed"
+//       : "bg-green-500"
+//   }`;
 
-  return (
-    <div
-      onClick={() => !isDisabled && onSeatClick(rowNumber, position)}
-      className={seatClass}
-    >
-      {rowNumber}
-      {position}
-      <br />
-      {status}
-    </div>
-  );
-}
+//   return (
+//     <div
+//       onClick={() => !isDisabled && onSeatClick(rowNumber, position)}
+//       className={seatClass}
+//     >
+//       {rowNumber}
+//       {position}
+//       <br />
+//       {status}
+//     </div>
+//   );
+// }
 
 export default function Page() {
   const { id } = useParams() as { id: string };
@@ -72,6 +73,7 @@ export default function Page() {
   const flightId = "6651b0cf6c6bc7b88e5df3de";
   
   const aircraft = new AircraftSeating(19);
+  
 
   useEffect(() => {
     const fetchSeats = async () => {
