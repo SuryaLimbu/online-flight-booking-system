@@ -59,10 +59,10 @@ export const getSectionById = async (req: Request) => {
 
 export const createSection = async (req: Request) => {
   try {
-    const { sectionName, numberOfSeats, pricePerSeat } = await req.json();
+    const {aircraftId, sectionName, pricePerSeat } = await req.json();
     const newSection = new Section({
+      aircraftId,
       sectionName,
-      numberOfSeats,
       pricePerSeat,
     });
     await newSection.save();

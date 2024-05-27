@@ -1,6 +1,16 @@
-"use client"
+"use client";
 import React from "react";
-import {Navbar, NavbarBrand, NavbarContent, NavbarItem, NavbarMenuToggle, NavbarMenu, NavbarMenuItem, Link, Button} from "@nextui-org/react";
+import {
+  Navbar,
+  NavbarBrand,
+  NavbarContent,
+  NavbarItem,
+  NavbarMenuToggle,
+  NavbarMenu,
+  NavbarMenuItem,
+  Link,
+  Button,
+} from "@nextui-org/react";
 
 // import {AcmeLogo} from "./AcmeLogo.jsx";
 
@@ -29,7 +39,10 @@ export default function TopNavbar() {
         />
         <NavbarBrand>
           {/* <AcmeLogo /> */}
-          <p className="font-bold text-inherit">{process.env.NEXT_PUBLIC_SITE_TITLE}</p>
+          <a href="/" className="font-bold text-inherit">{process.env.NEXT_PUBLIC_SITE_TITLE}</a>
+          {/* <p >
+            {process.env.NEXT_PUBLIC_SITE_TITLE}
+          </p> */}
         </NavbarBrand>
       </NavbarContent>
 
@@ -58,7 +71,6 @@ export default function TopNavbar() {
           <Button as={Link} color="primary" href="#" variant="flat">
             Register
           </Button>
-          
         </NavbarItem>
       </NavbarContent>
       <NavbarMenu>
@@ -66,7 +78,11 @@ export default function TopNavbar() {
           <NavbarMenuItem key={`${item}-${index}`}>
             <Link
               color={
-                index === 2 ? "primary" : index === menuItems.length - 1 ? "danger" : "foreground"
+                index === 2
+                  ? "primary"
+                  : index === menuItems.length - 1
+                  ? "danger"
+                  : "foreground"
               }
               className="w-full"
               href="#"

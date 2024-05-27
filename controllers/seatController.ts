@@ -40,11 +40,12 @@ export const getSeatById = async (req: Request) => {
 
 export const createSeat = async (req: Request) => {
   try {
-    const { sectionId, seatCode, seatStatus } = await req.json();
+    const { sectionId, rowNumber, position,status } = await req.json();
     const newSeat = new Seat({
       sectionId,
-      seatCode,
-      seatStatus,
+      rowNumber,
+      position,
+      status,
     });
     return new Response(JSON.stringify(newSeat), {
       status: 200,
