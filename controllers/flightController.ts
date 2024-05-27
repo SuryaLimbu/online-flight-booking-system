@@ -85,7 +85,7 @@ export const specificFlightData = async (req: Request) => {
     const flights = await Flight.find({
       departureAirport: from,
       arrivalAirport: to,
-      departureTime: newDataTypeConverter
+      // departureTime: newDataTypeConverter
     })
       .populate("departureAirport")
       .populate("arrivalAirport")

@@ -1,4 +1,5 @@
 import Booking from "@/models/Booking";
+import mongoose from "mongoose";
 
 export const getAllBookings = async (req: Request) => {
   try {
@@ -16,6 +17,42 @@ export const getAllBookings = async (req: Request) => {
         "Content-Type": "application/json",
       },
     });
+  }
+};
+export const getBookedSeatIdsByFlight = async (req: Request) => {
+  try {
+    const url = new URL(req.url);
+    // console.log(req);
+    const flightId = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!flightId) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const bookings = await Booking.find({ flightId })
+      .select("seatId")
+      .populate("seatId");
+    // const bookedSeatIds: mongoose.Schema.Types.ObjectId[] = [];
+
+    // bookings.forEach((booking) => {
+    //   bookedSeatIds.push(...booking.seatId);
+    // });
+
+    return new Response(JSON.stringify(bookings), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching booked seat IDs:", error);
+    throw error;
   }
 };
 export const getBookingById = async (req: Request) => {
@@ -88,7 +125,19 @@ export const updateBooking = async (req: Request) => {
 
 export const deleteBooking = async (req: Request) => {
   try {
-    const { id } = await req.json();
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     await Booking.findByIdAndDelete(id);
     return new Response(JSON.stringify({}), {
       status: 200,

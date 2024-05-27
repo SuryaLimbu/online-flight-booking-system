@@ -1,17 +1,18 @@
-import { Schema, model, models } from "mongoose";
+import mongoose, { Schema, model, models, mongo } from "mongoose";
 
-interface ISection {
+interface ISection extends Document {
+  aircraftId: mongoose.Schema.Types.ObjectId;
   sectionName: string;
-  numberOfSeats: number;
   pricePerSeat: number;
 }
 const sectionSchema = new Schema<ISection>({
-  sectionName: {
-    type: String,
+  aircraftId: {
+    type: Schema.Types.ObjectId,
+    ref: "Aircraft",
     required: true,
   },
-  numberOfSeats: {
-    type: Number,
+  sectionName: {
+    type: String,
     required: true,
   },
   pricePerSeat: {
