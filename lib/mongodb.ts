@@ -1,4 +1,3 @@
-
 import _mongoose, { connect } from "mongoose";
 
 declare global {
@@ -8,25 +7,17 @@ declare global {
     conn: typeof _mongoose | null;
   };
 }
-// console.log("username", process.env.DB_USERNAME);
 
 const MONGODB_URI = process.env.MONGODB_URI;
-// console.log("MONGODB_URI", MONGODB_URI);
-
 
 if (!MONGODB_URI || MONGODB_URI.length === 0) {
   throw new Error("Please add your MongoDB URI to .env.local");
 }
 
-/**
- * Global is used here to maintain a cached connection across hot reloads
- * in development. This prevents connections from growing exponentially
- * during API Route usage.
- */
 let cached = global.mongoose;
 
 if (!cached) {
-  cached = global.mongoose = { conn: null, promise: null };
+  cached = global.mongoose = { Schema: _mongoose.Schema, conn: null, promise: null };
 }
 
 async function connectDB() {
