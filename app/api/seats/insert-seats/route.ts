@@ -29,10 +29,12 @@ async function saveSeat(
   position: string,
   status: string | null
 ) {
+  const seatName = rowNumber + position;
   const seat = new Seat({
-    class: sectionId,
+    sectionId: sectionId,
     rowNumber,
     position,
+    seatName,
     status: status === null ? "available" : status,
   });
   await seat.save();
@@ -58,7 +60,7 @@ export async function POST(req: Request) {
       for (const position of ["D", "E", "F"]) {
         await saveSeat(businessclass, rowNumber, position, row.right[position]);
       }
-    } else {
+    } else if(rowNumber <= 20){
       for (const position of ["A", "B", "C"]) {
         await saveSeat(economyclass, rowNumber, position, row.left[position]);
       }

@@ -50,6 +50,9 @@ export default function Page() {
   const [transformedNewselectedseats, setTransformedNewselectedseats] =
     useState<[number, string][]>([]);
 
+  const [bookedSeats, setBookedSeats] = useState<string[] | string>();
+  const [bookedSeatId, setBookedSeatId] = useState<any[]>([]);
+
   const maxSelectableSeats = 6;
   const flightId = "6651b0cf6c6bc7b88e5df3de";
 
@@ -282,48 +285,110 @@ export default function Page() {
     const resultingData: [number, string][] = selectedSeats.map(
       (seat) => [seat.rowNumber, seat.position] as [number, string]
     );
-
+    // var bookingSeat = null;
     if (selectedSeatsTuples.length == 1) {
       const bookingSeat = aircraft.bookSeat(
         selectedSeatsTuples[0][0],
         selectedSeatsTuples[0][1]
       );
+      setBookedSeats(bookingSeat);
       console.log("verified:", bookingSeat);
+
+      bookingSeat.map(async (seats: any) => {
+        // console.log("verified:",seats);
+        try {
+          const response = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seats}`
+          );
+          if (!response.ok) {
+            throw new Error(`Error fetching seat: ${seats}`);
+          }
+          const data = await response.json();
+          // return data;
+          // console.log("verified results from api:", results);
+          setBookedSeatId(data);
+        } catch (error) {
+          console.error("Error booking seats:", error);
+        }
+      });
     } else {
       const bookingSeat = aircraft.bulkBookSeats(selectedSeatsTuples);
+      setBookedSeats(bookingSeat);
       console.log("verified:", bookingSeat);
-    }
 
+      
+      bookingSeat.map(async (seats: any) => {
+        // console.log("verified:",seats);
+        try {
+          const results = await Promise.all(
+            bookingSeat.map(async (seat: any) => {
+              const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seat}`
+              );
+              if (!response.ok) {
+                throw new Error(`Error fetching seat: ${seat}`);
+              }
+              const data = await response.json();
+              return data;
+            })
+          );
+          // console.log("verified results from api:", results);
+          setBookedSeatId(results);
+        } catch (error) {
+          console.error("Error booking seats:", error);
+        }
+      });
+    }
+    // console.log("verified booked seats from algorithm:", bookedSeats);
+
+    console.log("verified booked seats:", bookedSeatId);
+
+    // Flatten the bookedSeatId array
+    const flattenedSeats = bookedSeatId.flat();
+
+    // Create the seatIds array
+    const seatIds = flattenedSeats.map((seat) => seat._id);
+    console.log("verified seat ids:", seatIds);
+
+    // Calculate the total price
+    var totalPrice = 0;
+    flattenedSeats.forEach((seat) =>{
+      totalPrice += seat.sectionId.pricePerSeat;
+    });
+    console.log("verified total price:", totalPrice);
+
+    // Create the data object to store in the database
     const data = {
       flightId: id,
       userId: "6651b0cf6c6bc7b88e5df3de",
-      seatIds: selectedSeats.map((seat) => `${seat.rowNumber}${seat.position}`),
-      totalPrice: selectedSeats.length * 1000,
+      seatId: seatIds,
+      totalPrice: totalPrice,
       passengerId: "6651b0cf6c6bc7b88e5df3de",
       aircraftId: "6651b0cf6c6bc7b88e5df3de",
     };
+    console.log("verified data for store in database:", data);
 
-    // try {
-    //   const response = await fetch(
-    //     `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
-    //     {
-    //       method: "POST",
-    //       headers: {
-    //         "Content-Type": "application/json",
-    //       },
-    //       body: JSON.stringify(data),
-    //     }
-    //   );
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+        }
+      );
 
-    //   if (!response.ok) {
-    //     throw new Error("Booking failed");
-    //   }
+      if (!response.ok) {
+        throw new Error("Booking failed");
+      }
 
-    //   const result = await response.json();
-    //   console.log("Success:", result);
-    // } catch (error) {
-    //   console.error("Error:", error);
-    // }
+      const result = await response.json();
+      console.log("Success:", result);
+    } catch (error) {
+      console.error("Error:", error);
+    }
   };
 
   const handleAutoBooking = async () => {

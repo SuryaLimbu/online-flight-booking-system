@@ -37,14 +37,52 @@ export const getSeatById = async (req: Request) => {
     });
   }
 };
+export const getSeatByName = async (req: Request) => {
+  // console.log(await req.json());
+  try {
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Aircraft ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const seat = await Seat.find({ seatName: id }).populate("sectionId");
+    
+    console.log("data test in api:", seat);
+
+    return new Response(JSON.stringify(seat), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify(error), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
 
 export const createSeat = async (req: Request) => {
   try {
-    const { sectionId, rowNumber, position,status } = await req.json();
+    const { sectionId, rowNumber, position, seatName, status } =
+      await req.json();
     const newSeat = new Seat({
       sectionId,
       rowNumber,
       position,
+      seatName,
       status,
     });
     return new Response(JSON.stringify(newSeat), {

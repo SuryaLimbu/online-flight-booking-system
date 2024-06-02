@@ -1,209 +1,268 @@
 type Seat = { [key: string]: boolean | null };
 
 export class AircraftSeating {
-    numRows: number;
-    firstClassStartRow: number;
-    firstClassEndRow: number;
-    businessClassStartRow: number;
-    businessClassEndRow: number;
-    economyClassStartRow: number;
-    economyClassEndRow: number;
-    seats: { left: Seat; right: Seat }[];
+  numRows: number;
+  firstClassStartRow: number;
+  firstClassEndRow: number;
+  businessClassStartRow: number;
+  businessClassEndRow: number;
+  economyClassStartRow: number;
+  economyClassEndRow: number;
+  seats: { left: Seat; right: Seat }[];
 
-    constructor(numRows: number, firstClassStartRow: number, firstClassEndRow: number,
-                businessClassStartRow: number, businessClassEndRow: number,
-                economyClassStartRow: number, economyClassEndRow: number,
-                bookedSeats: [number, string][] = []) {
-        this.numRows = numRows;
-        this.firstClassStartRow = firstClassStartRow;
-        this.firstClassEndRow = firstClassEndRow;
-        this.businessClassStartRow = businessClassStartRow;
-        this.businessClassEndRow = businessClassEndRow;
-        this.economyClassStartRow = economyClassStartRow;
-        this.economyClassEndRow = economyClassEndRow;
-        this.seats = this.initializeSeating(numRows);
-        this.updateBookedSeats(bookedSeats);
+  constructor(
+    numRows: number,
+    firstClassStartRow: number,
+    firstClassEndRow: number,
+    businessClassStartRow: number,
+    businessClassEndRow: number,
+    economyClassStartRow: number,
+    economyClassEndRow: number,
+    bookedSeats: [number, string][] = []
+  ) {
+    this.numRows = numRows;
+    this.firstClassStartRow = firstClassStartRow;
+    this.firstClassEndRow = firstClassEndRow;
+    this.businessClassStartRow = businessClassStartRow;
+    this.businessClassEndRow = businessClassEndRow;
+    this.economyClassStartRow = economyClassStartRow;
+    this.economyClassEndRow = economyClassEndRow;
+    this.seats = this.initializeSeating(numRows);
+    this.updateBookedSeats(bookedSeats);
+  }
+
+  initializeSeating(numRows: number): { left: Seat; right: Seat }[] {
+    const seats = [];
+    for (let i = 0; i < numRows; i++) {
+      const row = {
+        left: { A: null, B: null, C: null },
+        right: { D: null, E: null, F: null },
+      };
+      seats.push(row);
     }
+    return seats;
+  }
 
-    initializeSeating(numRows: number): { left: Seat; right: Seat }[] {
-        const seats = [];
-        for (let i = 0; i < numRows; i++) {
-            const row = {
-                left: { 'A': null, 'B': null, 'C': null },
-                right: { 'D': null, 'E': null, 'F': null }
-            };
-            seats.push(row);
-        }
-        return seats;
-    }
-
-    updateBookedSeats(bookedSeats: [number, string][]): void {
-        for (const [rowNumber, column] of bookedSeats) {
-            if (rowNumber >= 1 && rowNumber <= this.numRows) {
-                const side: 'left' | 'right' = column in { 'A': 1, 'B': 1, 'C': 1 } ? 'left' : 'right';
-                if (column in this.seats[rowNumber - 1][side]) {
-                    this.seats[rowNumber - 1][side][column] = true;
-                }
-            }
-        }
-    }
-
-    displaySeating(): string {
-        let layout = "Seating Layout:\n";
-        this.seats.forEach((row, rowIndex) => {
-            const leftSeats = Object.entries(row.left).map(([col, seat]) => `${col}:${seat ? 'X' : 'O'}`).join(' ');
-            const rightSeats = Object.entries(row.right).map(([col, seat]) => `${col}:${seat ? 'X' : 'O'}`).join(' ');
-            layout += `Row ${rowIndex + 1}: ${leftSeats} || ${rightSeats}\n`;
-        });
-        return layout;
-    }
-
-    bookSeat(rowNumber: number, column: string): string {
-        if (rowNumber < 1 || rowNumber > this.numRows) {
-            return "Invalid row number.";
-        }
-
-        const side: 'left' | 'right' = column in { 'A': 1, 'B': 1, 'C': 1 } ? 'left' : 'right';
+  updateBookedSeats(bookedSeats: [number, string][]): void {
+    for (const [rowNumber, column] of bookedSeats) {
+      if (rowNumber >= 1 && rowNumber <= this.numRows) {
+        const side: "left" | "right" =
+          column in { A: 1, B: 1, C: 1 } ? "left" : "right";
         if (column in this.seats[rowNumber - 1][side]) {
-            if (!this.seats[rowNumber - 1][side][column]) {
-                if (rowNumber > this.firstClassEndRow && this.isMiddleSeat(column) && this.bothAdjacentSeatsEmpty(rowNumber - 1, column, side)) {
-                    return `Cannot book middle seat ${rowNumber}${column} alone if both adjacent seats are unbooked.`;
-                }
-                this.seats[rowNumber - 1][side][column] = true;
-                return `Seat ${rowNumber}${column} successfully booked.`;
-            } else {
-                return `Seat ${rowNumber}${column} is already booked.`;
-            }
-        } else {
-            return "Invalid seat column.";
+          this.seats[rowNumber - 1][side][column] = true;
         }
+      }
+    }
+  }
+
+  displaySeating(): string {
+    let layout = "Seating Layout:\n";
+    this.seats.forEach((row, rowIndex) => {
+      const leftSeats = Object.entries(row.left)
+        .map(([col, seat]) => `${col}:${seat ? "X" : "O"}`)
+        .join(" ");
+      const rightSeats = Object.entries(row.right)
+        .map(([col, seat]) => `${col}:${seat ? "X" : "O"}`)
+        .join(" ");
+      layout += `Row ${rowIndex + 1}: ${leftSeats} || ${rightSeats}\n`;
+    });
+    return layout;
+  }
+
+  bookSeat(rowNumber: number, column: string): string[] | any {
+    if (rowNumber < 1 || rowNumber > this.numRows) {
+      return "Invalid row number.";
     }
 
-    checkSeatAvailability(rowNumber: number, column: string): boolean | string {
-        if (rowNumber < 1 || rowNumber > this.numRows) {
-            return "Invalid row number.";
+    const side: "left" | "right" =
+      column in { A: 1, B: 1, C: 1 } ? "left" : "right";
+    if (column in this.seats[rowNumber - 1][side]) {
+      const bookedSeats: string[] = [];
+      if (!this.seats[rowNumber - 1][side][column]) {
+        if (
+          rowNumber > this.firstClassEndRow &&
+          this.isMiddleSeat(column) &&
+          this.bothAdjacentSeatsEmpty(rowNumber - 1, column, side)
+        ) {
+          return `Cannot book middle seat ${rowNumber}${column} alone if both adjacent seats are unbooked.`;
         }
+        this.seats[rowNumber - 1][side][column] = true;
+        bookedSeats.push(`${rowNumber}${column}`);
+        return bookedSeats;
+      } else {
+        return `Seat ${rowNumber}${column} is already booked.`;
+      }
+    } else {
+      return "Invalid seat column.";
+    }
+  }
 
-        const side: 'left' | 'right' = column in { 'A': 1, 'B': 1, 'C': 1 } ? 'left' : 'right';
-        if (column in this.seats[rowNumber - 1][side]) {
-            return !this.seats[rowNumber - 1][side][column];
-        } else {
-            return "Invalid seat column.";
-        }
+  checkSeatAvailability(rowNumber: number, column: string): boolean | string {
+    if (rowNumber < 1 || rowNumber > this.numRows) {
+      return "Invalid row number.";
     }
 
-    bulkBookSeats(seatRequests: [number, string][]): string {
-        const bookedSeats: string[] = [];
-        if (seatRequests.length > 6) {
-            return "Cannot book more than 6 seats in a single transaction.";
-        }
+    const side: "left" | "right" =
+      column in { A: 1, B: 1, C: 1 } ? "left" : "right";
+    if (column in this.seats[rowNumber - 1][side]) {
+      return !this.seats[rowNumber - 1][side][column];
+    } else {
+      return "Invalid seat column.";
+    }
+  }
 
-        console.log("Seats requested in bulk function", seatRequests);
-
-        for (const [rowNumber, column] of seatRequests) {
-            if (rowNumber < 1 || rowNumber > this.numRows) {
-                return `Invalid row number ${rowNumber}.`;
-            }
-            const side: 'left' | 'right' = column in { 'A': 1, 'B': 1, 'C': 1 } ? 'left' : 'right';
-            if (!(column in this.seats[rowNumber - 1][side])) {
-                return `Invalid seat column ${column}.`;
-            }
-            if (this.seats[rowNumber - 1][side][column]) {
-                return `Seat ${rowNumber}${column} is already booked.`;
-            }
-        }
-
-        // At this point, all validations have passed
-        for (const [rowNumber, column] of seatRequests) {
-            const side: 'left' | 'right' = column in { 'A': 1, 'B': 1, 'C': 1 } ? 'left' : 'right';
-            this.seats[rowNumber - 1][side][column] = true;
-            bookedSeats.push(`${rowNumber}${column}`);
-        }
-
-        return `Seats successfully booked: ${JSON.stringify(bookedSeats)}.`;
+  bulkBookSeats(seatRequests: [number, string][]): string[] | any {
+    const bookedSeats: string[] = [];
+    if (seatRequests.length > 6) {
+      return "Cannot book more than 6 seats in a single transaction.";
     }
 
-    autoBookSeats(numSeats: number, seatClass: 'first' | 'business' | 'economy'): string {
-        if (numSeats < 1 || numSeats > 6) {
-            return "Can only auto-book between 1 and 6 seats.";
-        }
+    console.log("Seats requested in bulk function", seatRequests);
 
-        const bookedSeats: string[] = [];
-        const sides = ['left', 'right'] as const;
-        let startRow: number;
-        let endRow: number;
-
-        if (seatClass === 'first') {
-            startRow = this.firstClassStartRow;
-            endRow = this.firstClassEndRow;
-        } else if (seatClass === 'business') {
-            startRow = this.businessClassStartRow;
-            endRow = this.businessClassEndRow;
-        } else {
-            startRow = this.economyClassStartRow;
-            endRow = this.economyClassEndRow;
-        }
-
-        // First, try to book seats on the left side from front to back
-        for (let rowIndex = startRow - 1; rowIndex < endRow && bookedSeats.length < numSeats; rowIndex++) {
-            const row = this.seats[rowIndex];
-            const columns = Object.keys(row.left);
-            for (let i = 0; i < columns.length && bookedSeats.length < numSeats; i++) {
-                if (!row.left[columns[i]]) {
-                    row.left[columns[i]] = true;
-                    bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
-                    if (bookedSeats.length === numSeats) {
-                        return JSON.stringify(bookedSeats);
-                    }
-                }
-            }
-        }
-
-        // If needed, book seats on the right side from back to front
-        for (let rowIndex = endRow - 1; rowIndex >= startRow - 1 && bookedSeats.length < numSeats; rowIndex--) {
-            const row = this.seats[rowIndex];
-            const columns = Object.keys(row.right);
-            for (let i = 0; i < columns.length && bookedSeats.length < numSeats; i++) {
-                if (!row.right[columns[i]]) {
-                    row.right[columns[i]] = true;
-                    bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
-                    if (bookedSeats.length === numSeats) {
-                        return JSON.stringify(bookedSeats);
-                    }
-                }
-            }
-        }
-
-        return bookedSeats.length === numSeats ? JSON.stringify(bookedSeats) : "Unable to find the required number of adjacent seats.";
+    for (const [rowNumber, column] of seatRequests) {
+      if (rowNumber < 1 || rowNumber > this.numRows) {
+        return `Invalid row number ${rowNumber}.`;
+      }
+      const side: "left" | "right" =
+        column in { A: 1, B: 1, C: 1 } ? "left" : "right";
+      if (!(column in this.seats[rowNumber - 1][side])) {
+        return `Invalid seat column ${column}.`;
+      }
+      if (this.seats[rowNumber - 1][side][column]) {
+        return `Seat ${rowNumber}${column} is already booked.`;
+      }
     }
 
-    isMiddleSeat(column: string): boolean {
-        return column === 'B' || column === 'E';
+    // At this point, all validations have passed
+    for (const [rowNumber, column] of seatRequests) {
+      const side: "left" | "right" =
+        column in { A: 1, B: 1, C: 1 } ? "left" : "right";
+      this.seats[rowNumber - 1][side][column] = true;
+      bookedSeats.push(`${rowNumber}${column}`);
+    }
+    console.log("Seats booked in bulk function", bookedSeats);
+
+    return bookedSeats;
+  }
+
+  autoBookSeats(
+    numSeats: number,
+    seatClass: "first" | "business" | "economy"
+  ): string {
+    if (numSeats < 1 || numSeats > 6) {
+      return "Can only auto-book between 1 and 6 seats.";
     }
 
-    bothAdjacentSeatsEmpty(rowIndex: number, column: string, side: 'left' | 'right'): boolean {
-        const columns = Object.keys(this.seats[rowIndex][side]);
-        const colIndex = columns.indexOf(column);
+    const bookedSeats: string[] = [];
+    const sides = ["left", "right"] as const;
+    let startRow: number;
+    let endRow: number;
 
-        if (colIndex > 0 && colIndex < columns.length - 1) {
-            const leftSeat = columns[colIndex - 1];
-            const rightSeat = columns[colIndex + 1];
-            if (!this.seats[rowIndex][side][leftSeat] && !this.seats[rowIndex][side][rightSeat]) {
-                return true;
-            }
-        }
-        return false;
+    if (seatClass === "first") {
+      startRow = this.firstClassStartRow;
+      endRow = this.firstClassEndRow;
+    } else if (seatClass === "business") {
+      startRow = this.businessClassStartRow;
+      endRow = this.businessClassEndRow;
+    } else {
+      startRow = this.economyClassStartRow;
+      endRow = this.economyClassEndRow;
     }
 
-    wouldLeaveSingleScatteredSeatInRange(columns: string[], start: number, end: number, rowSide: Seat): boolean {
-        if (start > 0 && !rowSide[columns[start - 1]] && rowSide[columns[start]]) {
-            return true;
+    // First, try to book seats on the left side from front to back
+    for (
+      let rowIndex = startRow - 1;
+      rowIndex < endRow && bookedSeats.length < numSeats;
+      rowIndex++
+    ) {
+      const row = this.seats[rowIndex];
+      const columns = Object.keys(row.left);
+      for (
+        let i = 0;
+        i < columns.length && bookedSeats.length < numSeats;
+        i++
+      ) {
+        if (!row.left[columns[i]]) {
+          row.left[columns[i]] = true;
+          bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
+          if (bookedSeats.length === numSeats) {
+            return JSON.stringify(bookedSeats);
+          }
         }
-        if (end < columns.length && !rowSide[columns[end]] && rowSide[columns[end - 1]]) {
-            return true;
-        }
-        return false;
+      }
     }
+
+    // If needed, book seats on the right side from back to front
+    for (
+      let rowIndex = endRow - 1;
+      rowIndex >= startRow - 1 && bookedSeats.length < numSeats;
+      rowIndex--
+    ) {
+      const row = this.seats[rowIndex];
+      const columns = Object.keys(row.right);
+      for (
+        let i = 0;
+        i < columns.length && bookedSeats.length < numSeats;
+        i++
+      ) {
+        if (!row.right[columns[i]]) {
+          row.right[columns[i]] = true;
+          bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
+          if (bookedSeats.length === numSeats) {
+            return JSON.stringify(bookedSeats);
+          }
+        }
+      }
+    }
+
+    return bookedSeats.length === numSeats
+      ? JSON.stringify(bookedSeats)
+      : "Unable to find the required number of adjacent seats.";
+  }
+
+  isMiddleSeat(column: string): boolean {
+    return column === "B" || column === "E";
+  }
+
+  bothAdjacentSeatsEmpty(
+    rowIndex: number,
+    column: string,
+    side: "left" | "right"
+  ): boolean {
+    const columns = Object.keys(this.seats[rowIndex][side]);
+    const colIndex = columns.indexOf(column);
+
+    if (colIndex > 0 && colIndex < columns.length - 1) {
+      const leftSeat = columns[colIndex - 1];
+      const rightSeat = columns[colIndex + 1];
+      if (
+        !this.seats[rowIndex][side][leftSeat] &&
+        !this.seats[rowIndex][side][rightSeat]
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  wouldLeaveSingleScatteredSeatInRange(
+    columns: string[],
+    start: number,
+    end: number,
+    rowSide: Seat
+  ): boolean {
+    if (start > 0 && !rowSide[columns[start - 1]] && rowSide[columns[start]]) {
+      return true;
+    }
+    if (
+      end < columns.length &&
+      !rowSide[columns[end]] &&
+      rowSide[columns[end - 1]]
+    ) {
+      return true;
+    }
+    return false;
+  }
 }
 
 // // Example usage:

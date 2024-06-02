@@ -5,7 +5,7 @@ import "./globals.css";
 import Footer from "@/components/ui/footer";
 import Providers from "./providers";
 import TopNavbar from "@/components/ui/navbar";
-import { useState, useEffect } from "react";
+import { useState, useEffect, Suspense } from "react";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,11 +22,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-        <Providers>
-          <TopNavbar />
-          <main className="flex min-h-screen flex-col sm:p-24 p-4">{children}</main>
-          {/* <Footer /> */}
-        </Providers>
+      <Suspense fallback={<div>Loading...</div>}>
+          <Providers>
+            <TopNavbar />
+            <main className="flex min-h-screen flex-col sm:p-24 p-4">
+              {children}
+            </main>
+            {/* <Footer /> */}
+          </Providers>
+        </Suspense>
       </body>
     </html>
   );
