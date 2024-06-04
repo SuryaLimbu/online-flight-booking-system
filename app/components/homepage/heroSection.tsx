@@ -256,7 +256,7 @@ const HeroSection: React.FC = () => {
                     name="cabinClass"
                     placeholder="Select Cabin Class"
                     className="max-w-xs"
-                    defaultSelectedKeys={["Economy"]}
+                    // defaultSelectedKeys={["Economy"]}
                     value={formValues.cabinClass}
                     onChange={handleInputChange}
                   >

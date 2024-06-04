@@ -1,5 +1,6 @@
 import Booking from "@/models/Booking";
 import mongoose from "mongoose";
+import path from "path";
 
 export const getAllBookings = async (req: Request) => {
   try {
@@ -57,8 +58,65 @@ export const getBookedSeatIdsByFlight = async (req: Request) => {
 };
 export const getBookingById = async (req: Request) => {
   try {
-    const { id } = await req.json();
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
     const booking = await Booking.findById(id);
+    return new Response(JSON.stringify(booking), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify(error), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
+
+export const getBookingByUserId = async (req: Request) => {
+  try {
+    const url = new URL(req.url);
+    // console.log(req);
+    const userId = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!userId) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+    const booking = await Booking.find({ userId: userId })
+      .populate("seatId")
+      .populate("aircraftId")
+      .populate({
+        path: "flightId",
+        populate: { path: "departureAirport" },
+      })
+      .populate({
+        path: "flightId",
+        populate: { path: "arrivalAirport" },
+      });
+
+ 
+
     return new Response(JSON.stringify(booking), {
       status: 200,
       headers: {
@@ -77,13 +135,13 @@ export const getBookingById = async (req: Request) => {
 
 export const createBooking = async (req: Request) => {
   try {
-    const { userId, seatId, aircraftId, passengerId, flightId, totalPrice } =
+    const { userId, seatId, aircraftId, passengers, flightId, totalPrice } =
       await req.json();
     const newBooking = new Booking({
       userId,
       seatId,
       aircraftId,
-      passengerId,
+      passengers,
       flightId,
       totalPrice,
     });

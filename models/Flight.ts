@@ -1,5 +1,6 @@
 import mongoose, { model, models } from "mongoose";
-
+import Aircraft from "./Aircraft";
+import Airport from "./Airport";
 interface IFlight extends Document {
   flightNumber: string;
   departureAirport: mongoose.Schema.Types.ObjectId;
@@ -17,12 +18,12 @@ const flightSchema = new mongoose.Schema({
   },
   departureAirport: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
+    ref: Airport,
     required: true,
   },
   arrivalAirport: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Airport",
+    ref: Airport,
     required: true,
   },
   departureTime: {
@@ -35,7 +36,7 @@ const flightSchema = new mongoose.Schema({
   },
   aircraft: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Aircraft",
+    ref: Aircraft,
     required: true,
   },
   status: {

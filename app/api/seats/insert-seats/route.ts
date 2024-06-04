@@ -19,9 +19,9 @@ const predefinedSeats: {
   })),
 ];
 
-const firstclass = "6653c70654708534c75ff406";
-const businessclass = "6653c71154708534c75ff408";
-const economyclass = "6653c73654708534c75ff40a";
+const firstclass = "665e53c83e49581bc2e19cc8";
+const businessclass = "665e53d63e49581bc2e19cca";
+const economyclass = "665e53b43e49581bc2e19cc6";
 
 async function saveSeat(
   sectionId: string,

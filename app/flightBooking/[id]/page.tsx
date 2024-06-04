@@ -1,11 +1,15 @@
 "use client";
 
 import { Button, Select, SelectItem } from "@nextui-org/react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
 import { AircraftSeating } from "./seatingPlan";
 import { Seat } from "./seat";
 import { PiRobotBold, PiSeatBold } from "react-icons/pi";
+
+import { setCookie, setArrayCookie } from "@/utils/cookies";
+import { useRouter } from "next/navigation";
+import ProgressBar from "@/app/components/flights/progressBar";
 
 interface SeatProps {
   sectionId: string;
@@ -54,9 +58,15 @@ export default function Page() {
   const [bookedSeatId, setBookedSeatId] = useState<any[]>([]);
 
   const maxSelectableSeats = 6;
-  const flightId = "6651b0cf6c6bc7b88e5df3de";
+  // const flightId = "6651b0cf6c6bc7b88e5df3de";
 
   const aircraft = new AircraftSeating(19, 1, 3, 4, 7, 8, 19, reservedSeats);
+
+  // set flightId to cookie
+  setCookie("flightId", id);
+
+  // initialize router with useRouter
+  const router = useRouter();
 
   useEffect(() => {
     const convertSeats = () => {
@@ -131,6 +141,8 @@ export default function Page() {
     fetchSeats();
     fetchReservedSeats();
   }, []);
+
+  useEffect(() => {}, []);
 
   const handleSeatClick = (rowNumber: number, position: string) => {
     setSelectedSeats((prevSelectedSeats) => {
@@ -291,120 +303,149 @@ export default function Page() {
         selectedSeatsTuples[0][0],
         selectedSeatsTuples[0][1]
       );
-      setBookedSeats(bookingSeat);
-      console.log("verified:", bookingSeat);
+      if (bookingSeat) {
+        setBookedSeats(bookingSeat);
 
-      bookingSeat.map(async (seats: any) => {
-        // console.log("verified:",seats);
-        try {
-          const response = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seats}`
-          );
-          if (!response.ok) {
-            throw new Error(`Error fetching seat: ${seats}`);
-          }
-          const data = await response.json();
-          // return data;
-          // console.log("verified results from api:", results);
-          setBookedSeatId(data);
-        } catch (error) {
-          console.error("Error booking seats:", error);
-        }
-      });
+        setArrayCookie("bookingSeat", bookingSeat);
+
+        console.log("verified:", bookingSeat);
+        router.push(`/flightBooking/payment`);
+      }
+
+      // bookingSeat.map(async (seats: any) => {
+      //   // console.log("verified:",seats);
+      //   try {
+      //     const response = await fetch(
+      //       `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seats}`
+      //     );
+      //     if (!response.ok) {
+      //       throw new Error(`Error fetching seat: ${seats}`);
+      //     }
+      //     const data = await response.json();
+      //     // return data;
+      //     // console.log("verified results from api:", results);
+      //     setBookedSeatId(data);
+      //   } catch (error) {
+      //     console.error("Error booking seats:", error);
+      //   }
+      // });
     } else {
       const bookingSeat = aircraft.bulkBookSeats(selectedSeatsTuples);
-      setBookedSeats(bookingSeat);
-      console.log("verified:", bookingSeat);
+      console.log("bulk booking:", bookingSeat);
+      if (bookingSeat) {
+        setBookedSeats(bookingSeat);
 
-      
-      bookingSeat.map(async (seats: any) => {
-        // console.log("verified:",seats);
-        try {
-          const results = await Promise.all(
-            bookingSeat.map(async (seat: any) => {
-              const response = await fetch(
-                `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seat}`
-              );
-              if (!response.ok) {
-                throw new Error(`Error fetching seat: ${seat}`);
-              }
-              const data = await response.json();
-              return data;
-            })
-          );
-          // console.log("verified results from api:", results);
-          setBookedSeatId(results);
-        } catch (error) {
-          console.error("Error booking seats:", error);
-        }
-      });
+        setArrayCookie("bookingSeat", bookingSeat);
+
+        console.log("verified:", bookingSeat);
+        router.push(`/flightBooking/payment`);
+      }
+
+      // bookingSeat.map(async (seats: any) => {
+      //   // console.log("verified:",seats);
+      //   try {
+      //     const results = await Promise.all(
+      //       bookingSeat.map(async (seat: any) => {
+      //         const response = await fetch(
+      //           `${process.env.NEXT_PUBLIC_API_URL}/seats/seatName/${seat}`
+      //         );
+      //         if (!response.ok) {
+      //           throw new Error(`Error fetching seat: ${seat}`);
+      //         }
+      //         const data = await response.json();
+      //         return data;
+      //       })
+      //     );
+      //     // console.log("verified results from api:", results);
+      //     setBookedSeatId(results);
+      //   } catch (error) {
+      //     console.error("Error booking seats:", error);
+      //   }
+      // });
     }
+    console.log("booking seats in sate:", bookedSeats);
     // console.log("verified booked seats from algorithm:", bookedSeats);
 
     console.log("verified booked seats:", bookedSeatId);
 
     // Flatten the bookedSeatId array
-    const flattenedSeats = bookedSeatId.flat();
+    // const flattenedSeats = bookedSeatId.flat();
 
     // Create the seatIds array
-    const seatIds = flattenedSeats.map((seat) => seat._id);
-    console.log("verified seat ids:", seatIds);
+    // const seatIds = flattenedSeats.map((seat) => seat._id);
+    // console.log("verified seat ids:", seatIds);
 
     // Calculate the total price
-    var totalPrice = 0;
-    flattenedSeats.forEach((seat) =>{
-      totalPrice += seat.sectionId.pricePerSeat;
-    });
-    console.log("verified total price:", totalPrice);
+    // var totalPrice = 0;
+    // const child = 0;
+    // flattenedSeats.forEach((seat) => {
+    //   if (child > 0) {
+    //     totalPrice +=
+    //       seat.sectionId.pricePerSeat - seat.sectionId.pricePerSeat * 0.25;
+    //   } else {
+    //     totalPrice += seat.sectionId.pricePerSeat;
+    //   }
+    // });
+    // console.log("verified total price:", totalPrice);
 
     // Create the data object to store in the database
-    const data = {
-      flightId: id,
-      userId: "6651b0cf6c6bc7b88e5df3de",
-      seatId: seatIds,
-      totalPrice: totalPrice,
-      passengerId: "6651b0cf6c6bc7b88e5df3de",
-      aircraftId: "6651b0cf6c6bc7b88e5df3de",
-    };
-    console.log("verified data for store in database:", data);
+    // const data = {
+    //   flightId: id,
+    //   userId: "6651b0cf6c6bc7b88e5df3de",
+    //   seatId: seatIds,
+    //   totalPrice: totalPrice,
+    //   passengerId: "6651b0cf6c6bc7b88e5df3de",
+    //   aircraftId: "6651b0cf6c6bc7b88e5df3de",
+    // };
+    // console.log("verified data for store in database:", data);
 
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-        }
-      );
+    // try {
+    //   const response = await fetch(
+    //     `${process.env.NEXT_PUBLIC_API_URL}/bookings`,
+    //     {
+    //       method: "POST",
+    //       headers: {
+    //         "Content-Type": "application/json",
+    //       },
+    //       body: JSON.stringify(data),
+    //     }
+    //   );
 
-      if (!response.ok) {
-        throw new Error("Booking failed");
-      }
+    //   if (!response.ok) {
+    //     throw new Error("Booking failed");
+    //   }
 
-      const result = await response.json();
-      console.log("Success:", result);
-    } catch (error) {
-      console.error("Error:", error);
-    }
+    //   const result = await response.json();
+    //   console.log("Success:", result);
+    // } catch (error) {
+    //   console.error("Error:", error);
+    // }
   };
 
   const handleAutoBooking = async () => {
     if (numberOfPassengers > 0) {
-      const autoBookedSeats = aircraft.autoBookSeats(
+      const autoBookedSeats: any[] = aircraft.autoBookSeats(
         numberOfPassengers,
         selectedClass === "all" ? "economy" : selectedClass
       );
-      alert(`Auto booked seats: ${autoBookedSeats}`);
+  
+      if (autoBookedSeats) {
+        setBookedSeats(autoBookedSeats);
+        setArrayCookie("bookingSeat", autoBookedSeats);
+  
+        console.log("verified:", autoBookedSeats);
+        router.push(`/flightBooking/payment`);
+      }
+      alert(`Auto booked seats: ${autoBookedSeats.join(", ")}`);
     } else {
       alert("Please select the number of passengers");
     }
   };
+  
 
   return (
     <div>
+      <ProgressBar progress={2} />
       <div className="flex gap-4">
         <Select
           id="number-of-passengers"

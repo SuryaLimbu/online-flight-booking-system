@@ -7,7 +7,7 @@ interface ISection extends Document {
 }
 const sectionSchema = new Schema<ISection>({
   aircraftId: {
-    type: Schema.Types.ObjectId,
+    type: mongoose.Schema.Types.ObjectId,
     ref: "Aircraft",
     required: true,
   },

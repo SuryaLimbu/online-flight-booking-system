@@ -148,7 +148,7 @@ export class AircraftSeating {
   autoBookSeats(
     numSeats: number,
     seatClass: "first" | "business" | "economy"
-  ): string {
+  ): string[] | any {
     if (numSeats < 1 || numSeats > 6) {
       return "Can only auto-book between 1 and 6 seats.";
     }
@@ -186,7 +186,9 @@ export class AircraftSeating {
           row.left[columns[i]] = true;
           bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
           if (bookedSeats.length === numSeats) {
-            return JSON.stringify(bookedSeats);
+            // return JSON.stringify(bookedSeats);
+            return bookedSeats;
+            // console.log("bookedSeats: ", bookedSeats);
           }
         }
       }
@@ -209,14 +211,16 @@ export class AircraftSeating {
           row.right[columns[i]] = true;
           bookedSeats.push(`${rowIndex + 1}${columns[i]}`);
           if (bookedSeats.length === numSeats) {
-            return JSON.stringify(bookedSeats);
+            // return JSON.stringify(bookedSeats);
+            return bookedSeats;
+            // console.log("bookedSeats: ", bookedSeats);
           }
         }
       }
     }
 
     return bookedSeats.length === numSeats
-      ? JSON.stringify(bookedSeats)
+      ? bookedSeats
       : "Unable to find the required number of adjacent seats.";
   }
 

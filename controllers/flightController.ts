@@ -4,9 +4,9 @@ import { URL } from "url";
 export const getAllFlights = async (req: Request) => {
   try {
     const flight = await Flight.find()
-     .populate("departureAirport")
-     .populate("arrivalAirport")
-     .populate("aircraft");
+      .populate("departureAirport")
+      .populate("arrivalAirport")
+      .populate("aircraft");
     console.log("flight:", JSON.stringify(flight));
     return new Response(JSON.stringify(flight), {
       status: 200,
@@ -39,7 +39,11 @@ export const getFlightById = async (req: Request) => {
         }
       );
     }
-    const flight = await Flight.findById(id);
+    const flight = await Flight.findById(id)
+      .populate("departureAirport")
+      .populate("arrivalAirport")
+      .populate("aircraft");
+
     if (!flight) {
       return new Response(JSON.stringify({ message: "Flight not found" }), {
         status: 404,
@@ -66,7 +70,7 @@ export const specificFlightData = async (req: Request) => {
   const { searchParams } = new URL(req.url);
   const from = searchParams.get("from");
   const to = searchParams.get("to");
-  const departureDate = searchParams.get("departureDate")+"T00:00:00.000Z";
+  const departureDate = searchParams.get("departureDate") + "T00:00:00.000Z";
   const cabinClass = searchParams.get("cabinClass");
   const totalTravelers = searchParams.get("totalTravelers");
 
@@ -91,7 +95,7 @@ export const specificFlightData = async (req: Request) => {
       .populate("arrivalAirport")
       .populate("aircraft");
 
-      // console.log("flights from searchflight api:", JSON.stringify(flights));
+    // console.log("flights from searchflight api:", JSON.stringify(flights));
 
     return Response.json(flights, { status: 200 });
   } catch (error) {

@@ -38,15 +38,17 @@ export const getSeatById = async (req: Request) => {
   }
 };
 export const getSeatByName = async (req: Request) => {
-  // console.log(await req.json());
   try {
+    // Extract the URL from the request
     const url = new URL(req.url);
-    // console.log(req);
-    const id = url.pathname.split("/").pop();
-    // console.log(id);
-    if (!id) {
+
+    // Get the seat name from the URL path
+    const seatName = url.pathname.split("/").pop();
+
+    // Check if seat name is provided
+    if (!seatName) {
       return new Response(
-        JSON.stringify({ message: "Aircraft ID is required" }),
+        JSON.stringify({ message: "Seat name is required" }),
         {
           status: 400,
           headers: { "Content-Type": "application/json" },
@@ -54,25 +56,51 @@ export const getSeatByName = async (req: Request) => {
       );
     }
 
-    const seat = await Seat.find({ seatName: id }).populate("sectionId");
-    
-    console.log("data test in api:", seat);
+    // Find the seat by name and populate the sectionId field
+    const seat = await Seat.find({ seatName }).populate("sectionId");
 
+    // Check if the seat is found
+    if (!seat || seat.length === 0) {
+      return new Response(
+        JSON.stringify({ message: "Seat not found" }),
+        {
+          status: 404,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    // Log the retrieved seat data for debugging
+    // console.log("Retrieved seat data:", seat);
+
+    // Return the seat data in the response
     return new Response(JSON.stringify(seat), {
       status: 200,
       headers: {
         "Content-Type": "application/json",
       },
     });
-  } catch (error) {
-    return new Response(JSON.stringify(error), {
-      status: 500,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+  } catch (error: any) {
+    // Log the error for debugging
+    console.error("Error retrieving seat:", error);
+
+    // Extract meaningful error information
+    const errorMessage = error.message || "An unknown error occurred";
+    const errorStack = error.stack || "No stack trace available";
+
+    // Return an error response with detailed information
+    return new Response(
+      JSON.stringify({ message: "Internal Server Error", error: errorMessage, stack: errorStack }),
+      {
+        status: 500,
+        headers: {
+          "Content-Type": "application/json",
+        }
+      }
+    );
   }
 };
+
 
 export const createSeat = async (req: Request) => {
   try {

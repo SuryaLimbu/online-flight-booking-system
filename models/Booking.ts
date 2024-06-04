@@ -1,43 +1,57 @@
 import mongoose, { model, models } from "mongoose";
+import User from "./User";
+import Seat from "./Seat";
+import Aircraft from "./Aircraft";
+import Flight from "./Flight";
+
+interface IPassenger {
+  fullName: string;
+  gender: string;
+  age: Date;
+  passportNumber: string;
+  emergencyContact: string;
+}
 
 interface IBooking extends Document {
   userId: mongoose.Schema.Types.ObjectId;
   seatId: mongoose.Schema.Types.ObjectId[];
   aircraftId: mongoose.Schema.Types.ObjectId;
-  passengerId: mongoose.Schema.Types.ObjectId[];
+  passengers: IPassenger[];
   flightId: mongoose.Schema.Types.ObjectId;
   totalPrice: number;
 }
+
+const passengerSchema = new mongoose.Schema<IPassenger>({
+  fullName: { type: String, required: true },
+  gender: { type: String, required: true },
+  age: { type: Date, required: true },
+  passportNumber: { type: String, required: true },
+  emergencyContact: { type: String, required: true },
+});
 
 const bookingSchema = new mongoose.Schema<IBooking>(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",
+      ref: User,
       required: true,
     },
     seatId: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "Seat",
+        ref: Seat,
         required: true,
       },
     ],
     aircraftId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Aircraft",
+      ref: Aircraft,
       required: true,
     },
-    passengerId: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Passenger",
-        required: true,
-      },
-    ],
+    passengers: [passengerSchema],
     flightId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Flight",
+      ref: Flight,
       required: true,
     },
     totalPrice: {

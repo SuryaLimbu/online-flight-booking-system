@@ -1,4 +1,5 @@
 import mongoose, { Schema, model, models } from "mongoose";
+import Section from "./Section";
 
 interface ISeat extends Document {
   sectionId: mongoose.Schema.Types.ObjectId;
@@ -11,7 +12,7 @@ interface ISeat extends Document {
 const seatSchema = new Schema<ISeat>({
   sectionId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Section",
+    ref: Section,
     required: true,
   },
   rowNumber: { type: Number, required: true },
