@@ -19,6 +19,7 @@ interface IBooking extends Document {
   passengers: IPassenger[];
   flightId: mongoose.Schema.Types.ObjectId;
   totalPrice: number;
+  status: string;
 }
 
 const passengerSchema = new mongoose.Schema<IPassenger>({
@@ -57,6 +58,10 @@ const bookingSchema = new mongoose.Schema<IBooking>(
     totalPrice: {
       type: Number,
       required: true,
+    },
+    status: {
+      type: String,
+      required: false,
     },
   },
 

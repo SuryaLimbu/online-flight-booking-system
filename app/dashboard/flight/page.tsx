@@ -7,6 +7,7 @@ import {
   DatePicker,
 } from "@nextui-org/react";
 import React, { ChangeEvent, useEffect, useState } from "react";
+import { PiEye } from "react-icons/pi";
 
 interface IFlight {
   _id: string;
@@ -313,6 +314,7 @@ export default function Page() {
               <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Action
               </th>
+              <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"></th>
             </tr>
           </thead>
           <tbody>
@@ -351,6 +353,16 @@ export default function Page() {
                     className="ml-4 text-indigo-600 hover:text-indigo-900 cursor-pointer"
                   >
                     Delete
+                  </a>
+                </td>
+                <td>
+                  <a
+                    href={`/dashboard/flight/${flight._id}`}
+                    className=" text-primary"
+                    
+                  
+                  >
+                    View
                   </a>
                 </td>
               </tr>

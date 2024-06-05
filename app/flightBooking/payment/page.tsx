@@ -11,7 +11,7 @@ import {
   PiTicket,
   PiX,
 } from "react-icons/pi";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import ProgressBar from "@/app/components/flights/progressBar";
 
 interface IPassenger {
@@ -71,6 +71,7 @@ export default function Page() {
 
   const flightId = getCookie("flightId");
   const [flightData, setFlightData] = useState<IFlight | null>(null);
+  const router = useRouter();
 
   useEffect(() => {
     const bookingSeats = getArrayCookie("bookingSeat");
@@ -188,7 +189,7 @@ export default function Page() {
       passengers: passengerList,
       aircraftId: flightData?.aircraft,
     };
-    console.log("verified data for store in database:", data);
+    // console.log("verified data for store in database:", data);
 
     try {
       const response = await fetch(
@@ -210,7 +211,8 @@ export default function Page() {
       const result = await response.json();
       if (result) {
         // console.log("Success:", result);
-        redirect("/flightBooking/bookingConfirmation");
+
+        router.push("/flightBooking/bookingConfirmation");
       }
     } catch (error) {
       console.error("Error:", error);

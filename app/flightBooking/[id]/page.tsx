@@ -7,7 +7,7 @@ import { AircraftSeating } from "./seatingPlan";
 import { Seat } from "./seat";
 import { PiRobotBold, PiSeatBold } from "react-icons/pi";
 
-import { setCookie, setArrayCookie } from "@/utils/cookies";
+import { setCookie, setArrayCookie, getCookie } from "@/utils/cookies";
 import { useRouter } from "next/navigation";
 import ProgressBar from "@/app/components/flights/progressBar";
 
@@ -56,6 +56,7 @@ export default function Page() {
 
   const [bookedSeats, setBookedSeats] = useState<string[] | string>();
   const [bookedSeatId, setBookedSeatId] = useState<any[]>([]);
+  const userId = getCookie("userId");
 
   const maxSelectableSeats = 6;
   // const flightId = "6651b0cf6c6bc7b88e5df3de";
@@ -279,6 +280,10 @@ export default function Page() {
   };
 
   const handleBooking = async () => {
+    if (!userId) {
+      alert("Please login to book seats");
+      return router.push("/auth/login");
+    }
     if (selectedSeats.length !== numberOfPassengers) {
       alert(
         `Please select exactly ${numberOfPassengers} seats before booking.`
@@ -332,7 +337,10 @@ export default function Page() {
     } else {
       const bookingSeat = aircraft.bulkBookSeats(selectedSeatsTuples);
       console.log("bulk booking:", bookingSeat);
-      if (bookingSeat) {
+      if (
+        bookingSeat &&
+        window.confirm(`Auto booked seats: ${bookedSeatId.join(", ")}`)
+      ) {
         setBookedSeats(bookingSeat);
 
         setArrayCookie("bookingSeat", bookingSeat);
@@ -423,25 +431,30 @@ export default function Page() {
   };
 
   const handleAutoBooking = async () => {
+    if (!userId) {
+      alert("Please login to book seats");
+      return router.push("/auth/login");
+    }
     if (numberOfPassengers > 0) {
       const autoBookedSeats: any[] = aircraft.autoBookSeats(
         numberOfPassengers,
         selectedClass === "all" ? "economy" : selectedClass
       );
-  
-      if (autoBookedSeats) {
+
+      if (
+        autoBookedSeats &&
+        window.confirm(`Auto booked seats: ${autoBookedSeats.join(", ")}`)
+      ) {
         setBookedSeats(autoBookedSeats);
         setArrayCookie("bookingSeat", autoBookedSeats);
-  
+
         console.log("verified:", autoBookedSeats);
         router.push(`/flightBooking/payment`);
       }
-      alert(`Auto booked seats: ${autoBookedSeats.join(", ")}`);
     } else {
       alert("Please select the number of passengers");
     }
   };
-  
 
   return (
     <div>

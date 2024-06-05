@@ -19,22 +19,22 @@ export default function Sidebar() {
       name: "Flight",
       link: "/dashboard/flight",
     },
-    {
-      name: "User",
-      link: "/dashboard/user",
-    },
-    {
-      name: "Passenger",
-      link: "/dashboard/passenger",
-    },
-    {
-      name: "Booking",
-      link: "/dashboard/booking",
-    },
-    {
-      name: "Payment",
-      link: "/dashboard/payment",
-    },
+    // {
+    //   name: "User",
+    //   link: "/dashboard/user",
+    // },
+    // {
+    //   name: "Passenger",
+    //   link: "/dashboard/passenger",
+    // },
+    // {
+    //   name: "Booking",
+    //   link: "/dashboard/booking",
+    // },
+    // {
+    //   name: "Payment",
+    //   link: "/dashboard/payment",
+    // },
   ];
   return (
     <>

@@ -115,7 +115,39 @@ export const getBookingByUserId = async (req: Request) => {
         populate: { path: "arrivalAirport" },
       });
 
- 
+    return new Response(JSON.stringify(booking), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify(error), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
+export const getBookingByFlightId = async (req: Request) => {
+  try {
+    const url = new URL(req.url);
+    // console.log(req);
+    const flightId = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!flightId) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+    const booking = await Booking.find({ flightId: flightId })
+      .populate("seatId")
+      .populate("aircraftId");
 
     return new Response(JSON.stringify(booking), {
       status: 200,

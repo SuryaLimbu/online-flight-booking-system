@@ -25,10 +25,9 @@ const TopNavbar: React.FC = () => {
   const [userId, setUserId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    if (getCookie("userId")) {
-      setUserId(getCookie("userId"));
-    }
+    setUserId(getCookie("userId"));
   }, []);
+  // console.log('userId', getCookie('userId'));
 
   const menuItems = [
     "Profile",
@@ -60,7 +59,7 @@ const TopNavbar: React.FC = () => {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <a href="/" className="font-bold text-inherit">
+          <a href="/" className="font-bold text-inherit hidden sm:block">
             {process.env.NEXT_PUBLIC_SITE_TITLE}
           </a>
         </NavbarBrand>
@@ -68,9 +67,13 @@ const TopNavbar: React.FC = () => {
 
       <NavbarContent className="hidden sm:flex gap-4" justify="center">
         <NavbarItem>
-          <Link color="foreground" href="#">
-            Features
-          </Link>
+          {userId ? (
+            <Link color="foreground" href="/booking/list">
+              Booking
+            </Link>
+          ) : (
+            <></>
+          )}
         </NavbarItem>
         <NavbarItem isActive>
           <Link href="#" aria-current="page">
@@ -84,7 +87,7 @@ const TopNavbar: React.FC = () => {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        {userId ? (
+        {userId? (
           <NavbarContent as="div" justify="end">
             <Dropdown placement="bottom-end">
               <DropdownTrigger>
@@ -106,14 +109,14 @@ const TopNavbar: React.FC = () => {
                 <DropdownItem key="dashboard" href="/dashboard">
                   Dashboard
                 </DropdownItem>
-                <DropdownItem key="settings">My Settings</DropdownItem>
+                {/* <DropdownItem key="settings">My Settings</DropdownItem>
                 <DropdownItem key="team_settings">Team Settings</DropdownItem>
                 <DropdownItem key="analytics">Analytics</DropdownItem>
                 <DropdownItem key="system">System</DropdownItem>
                 <DropdownItem key="configurations">Configurations</DropdownItem>
                 <DropdownItem key="help_and_feedback">
                   Help & Feedback
-                </DropdownItem>
+                </DropdownItem> */}
                 <DropdownItem
                   key="logout"
                   color="danger"

@@ -22,7 +22,4 @@ export async function PUT(req: Request) {
   return updateBooking(req);
 }
 
-export async function DELETE(req: Request) {
-  await connectDB();
-  return deleteBooking(req);
-}
+
