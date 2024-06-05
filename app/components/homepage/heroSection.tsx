@@ -390,6 +390,36 @@ const HeroSection: React.FC = () => {
                     </Button>
                   </div>
                 </form>
+                <div className="bg-green-200 p-4 my-4 rounded-xl">
+                  <h1>Available flight</h1>
+                  <div>
+                    <div className="sm:flex justify-between space-y-4 items-center">
+                      <div>
+                        <span className=" font-semibold">
+                          Departure Airport
+                        </span>
+                        <br />
+                        <span>Heathrow</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Arrival Airport</span>
+                        <br />
+                        <span>Suketar</span>
+                      </div>
+
+                      <div>
+                        <span className=" font-semibold">Departure Date</span>
+                        <br />
+                        <span>May/27/2024</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Cabin Class</span>
+                        <br />
+                        <span>any</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </CardBody>
             </Card>
           </Tab>
