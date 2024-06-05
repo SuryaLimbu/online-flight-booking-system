@@ -1,6 +1,6 @@
 // File path: pages/login.tsx
 "use client";
-import { setArrayCookie, setCookie } from "@/utils/cookies";
+import { setCookie } from "@/utils/cookies";
 import { Button, Input } from "@nextui-org/react";
 import React, { useState, FormEvent } from "react";
 
@@ -28,15 +28,13 @@ const Page: React.FC = () => {
       const data = await response.json();
 
       if (response.ok) {
-        // Handle successful login
         console.log("Login successful", data);
-        // Example: Store token and redirect
         setCookie("userId", data._id);
         setCookie("usermail", data.email);
         setCookie("userRole", data.roleId.roleName);
         window.location.href = "/"; // Redirect to dashboard
       } else {
-        setError(data.message);
+        setError(data.message || "Invalid credentials. Please try again.");
       }
     } catch (error) {
       console.error("Error logging in:", error);
@@ -46,7 +44,7 @@ const Page: React.FC = () => {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="border flex-col sm:w-1/4 items-center justify-center rounded-lg p-10 text-center">
+      <div className="border flex-col sm:w-2/4 items-center justify-center rounded-lg p-10 text-center">
         <div className="my-10">
           <h1 className="font-bold text-4xl">Login Page</h1>
         </div>

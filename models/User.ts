@@ -1,4 +1,5 @@
 import mongoose, { model, models, Document } from "mongoose";
+import Role from "./Role";
 
 interface IUser extends Document {
   firstName: string;
@@ -42,7 +43,7 @@ const UserSchema = new mongoose.Schema<IUser>({
   },
   roleId: {
     type: mongoose.Schema.Types.ObjectId,
-    ref: "Role",
+    ref: Role,
     required: true,
   },
   dateOfBirth: {

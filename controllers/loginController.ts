@@ -2,9 +2,11 @@ import User from "@/models/User";
 import bcrypt from "bcrypt";
 
 export const login = async (req: Request) => {
+  
   try {
     const { email, password } = await req.json();
-    const user = await User.findOne({ email }).populate('roleId');
+  
+    const user = await User.findOne({ email }).populate("roleId");
     if (!user) {
       return new Response(JSON.stringify({ error: "User not found" }), {
         status: 404,
@@ -13,6 +15,7 @@ export const login = async (req: Request) => {
         },
       });
     }
+    console.log("User:", user);
     const isPasswordValid = await bcrypt.compare(password, user.password);
     if (!isPasswordValid) {
       return new Response(JSON.stringify({ error: "Incorrect password" }), {

@@ -153,7 +153,7 @@ const HeroSection: React.FC = () => {
     };
     fetchAirports();
   }, [isSubmit]);
-  console.log("airports: ", airports);
+  // console.log("airports: ", airports);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -207,7 +207,7 @@ const HeroSection: React.FC = () => {
                   </RadioGroup>
                 </div>
                 <form
-                  className="sm:flex sm:gap-x-4 gap-y-4  items-center"
+                  className="space-y-4 sm:flex sm:gap-x-4 gap-y-4  items-center"
                   onSubmit={handleSubmit}
                 >
                   <Select
@@ -215,7 +215,7 @@ const HeroSection: React.FC = () => {
                     label="From"
                     name="from"
                     placeholder="Select your departure airport"
-                    className="max-w-xs"
+                    className="w-full sm:max-w-xs"
                     value={formValues.from}
                     onChange={handleInputChange}
                   >
@@ -231,7 +231,7 @@ const HeroSection: React.FC = () => {
                     label="To"
                     name="to"
                     placeholder="Select your arrival airport"
-                    className="max-w-xs"
+                    className="w-full sm:max-w-xs"
                     value={formValues.to}
                     onChange={handleInputChange}
                   >
@@ -244,7 +244,7 @@ const HeroSection: React.FC = () => {
                   <Input
                     type="date"
                     label="Departure"
-                    className="max-w-[284px]"
+                    className="w-full sm:max-w-[284px]"
                     name="departureDate"
                     value={formValues.departureDate}
                     onChange={handleInputChange}
@@ -255,7 +255,7 @@ const HeroSection: React.FC = () => {
                     label="Cabin Class"
                     name="cabinClass"
                     placeholder="Select Cabin Class"
-                    className="max-w-xs"
+                    className="w-full sm:max-w-xs"
                     // defaultSelectedKeys={["Economy"]}
                     value={formValues.cabinClass}
                     onChange={handleInputChange}
@@ -266,90 +266,93 @@ const HeroSection: React.FC = () => {
                       </SelectItem>
                     )}
                   </Select>
-                  <Button
-                    className="text-primary"
-                    color="primary"
-                    variant="flat"
-                    size="lg"
-                    onPress={onOpen}
-                  >
-                    Travellers
-                  </Button>
-                  <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
-                    <ModalContent>
-                      {(onClose) => (
-                        <>
-                          <ModalHeader className="flex flex-col gap-1">
-                            add travellers
-                          </ModalHeader>
-                          <ModalBody>
-                            <div className="flex-col gap-y-4">
-                              <div className="flex justify-between">
-                                <div>
-                                  <span className=" font-semibold">Adults</span>
-                                  <br />
-                                  <span>Age 16+</span>
+                  <div className="flex justify-between gap-4 ">
+                    <Button
+                      className="text-primary"
+                      color="primary"
+                      variant="flat"
+                      size="lg"
+                      onPress={onOpen}
+                    >
+                      Travellers
+                    </Button>
+                    <Modal isOpen={isOpen} onOpenChange={onOpenChange}>
+                      <ModalContent>
+                        {(onClose) => (
+                          <>
+                            <ModalHeader className="flex flex-col gap-1">
+                              add travellers
+                            </ModalHeader>
+                            <ModalBody>
+                              <div className="flex-col gap-y-4">
+                                <div className="flex justify-between">
+                                  <div>
+                                    <span className=" font-semibold">
+                                      Adults
+                                    </span>
+                                    <br />
+                                    <span>Age 16+</span>
+                                  </div>
+                                  <div>
+                                    <Button
+                                      size="sm"
+                                      color="primary"
+                                      className="text-white"
+                                      onClick={() => handleAdultChange(1)}
+                                      disabled={formValues.totalTravelers >= 6}
+                                    >
+                                      +
+                                    </Button>
+                                    <span className="mx-2">{adult}</span>
+                                    <Button
+                                      size="sm"
+                                      color="primary"
+                                      className="text-white"
+                                      onClick={() =>
+                                        setAdult((prevAdult) =>
+                                          Math.max(1, prevAdult - 1)
+                                        )
+                                      }
+                                    >
+                                      -
+                                    </Button>
+                                  </div>
                                 </div>
-                                <div>
-                                  <Button
-                                    size="sm"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() => handleAdultChange(1)}
-                                    disabled={formValues.totalTravelers >= 6}
-                                  >
-                                    +
-                                  </Button>
-                                  <span className="mx-2">{adult}</span>
-                                  <Button
-                                    size="sm"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() =>
-                                      setAdult((prevAdult) =>
-                                        Math.max(1, prevAdult - 1)
-                                      )
-                                    }
-                                  >
-                                    -
-                                  </Button>
+                                <div className="flex justify-between">
+                                  <div>
+                                    <span className=" font-semibold">
+                                      Children
+                                    </span>
+                                    <br />
+                                    <span>Aged 2 to 15</span>
+                                  </div>
+                                  <div>
+                                    <Button
+                                      size="sm"
+                                      color="primary"
+                                      className="text-white"
+                                      onClick={() => handleChildChange(1)}
+                                      disabled={formValues.totalTravelers >= 6}
+                                    >
+                                      +
+                                    </Button>
+                                    <span className="mx-2">{child}</span>
+                                    <Button
+                                      size="sm"
+                                      color="primary"
+                                      className="text-white"
+                                      onClick={() =>
+                                        setChild((prevChild) =>
+                                          Math.max(0, prevChild - 1)
+                                        )
+                                      }
+                                    >
+                                      -
+                                    </Button>
+                                  </div>
                                 </div>
-                              </div>
-                              <div className="flex justify-between">
-                                <div>
-                                  <span className=" font-semibold">
-                                    Children
-                                  </span>
-                                  <br />
-                                  <span>Aged 2 to 15</span>
-                                </div>
-                                <div>
-                                  <Button
-                                    size="sm"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() => handleChildChange(1)}
-                                    disabled={formValues.totalTravelers >= 6}
-                                  >
-                                    +
-                                  </Button>
-                                  <span className="mx-2">{child}</span>
-                                  <Button
-                                    size="sm"
-                                    color="primary"
-                                    className="text-white"
-                                    onClick={() =>
-                                      setChild((prevChild) =>
-                                        Math.max(0, prevChild - 1)
-                                      )
-                                    }
-                                  >
-                                    -
-                                  </Button>
-                                </div>
-                              </div>
 
-                              {/* <Select
+                                {/* <Select
                                 items={ages}
                                 label="Cabin Class"
                                 placeholder="Select Cabin Class"
@@ -360,31 +363,32 @@ const HeroSection: React.FC = () => {
                                   </SelectItem>
                                 )}
                               </Select> */}
-                            </div>
-                          </ModalBody>
-                          <ModalFooter>
-                            <Button
-                              color="primary"
-                              onPress={onClose}
-                              size="lg"
-                              className="w-full text-white"
-                            >
-                              Apply
-                            </Button>
-                          </ModalFooter>
-                        </>
-                      )}
-                    </ModalContent>
-                  </Modal>
+                              </div>
+                            </ModalBody>
+                            <ModalFooter>
+                              <Button
+                                color="primary"
+                                onPress={onClose}
+                                size="lg"
+                                className="w-full text-white"
+                              >
+                                Apply
+                              </Button>
+                            </ModalFooter>
+                          </>
+                        )}
+                      </ModalContent>
+                    </Modal>
 
-                  <Button
-                    className=" text-white"
-                    color="primary"
-                    size="lg"
-                    type="submit"
-                  >
-                    Search
-                  </Button>
+                    <Button
+                      className=" text-white"
+                      color="primary"
+                      size="lg"
+                      type="submit"
+                    >
+                      Search
+                    </Button>
+                  </div>
                 </form>
               </CardBody>
             </Card>
