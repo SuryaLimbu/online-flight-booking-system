@@ -1,21 +1,65 @@
+// File path: pages/login.tsx
+"use client";
+import { setArrayCookie, setCookie } from "@/utils/cookies";
 import { Button, Input } from "@nextui-org/react";
-import React from "react";
+import React, { useState, FormEvent } from "react";
 
-export default function page() {
+const Page: React.FC = () => {
+  const [email, setEmail] = useState<string>("");
+  const [password, setPassword] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setError("");
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        // Handle successful login
+        console.log("Login successful", data);
+        // Example: Store token and redirect
+        setCookie("userId", data._id);
+        setCookie("usermail", data.email);
+        setCookie("userRole", data.roleId.roleName);
+        window.location.href = "/"; // Redirect to dashboard
+      } else {
+        setError(data.message);
+      }
+    } catch (error) {
+      console.error("Error logging in:", error);
+      setError("An unexpected error occurred. Please try again.");
+    }
+  };
+
   return (
-    <div className=" flex h-screen justify-center items-center ">
-      <div className=" border flex-col w-1/4 items-center justify-center rounded-lg p-10 text-center">
-        <div className=" my-10">
-          <h1 className=" font-bold text-4xl">Login Page</h1>
+    <div className="flex h-screen justify-center items-center">
+      <div className="border flex-col sm:w-1/4 items-center justify-center rounded-lg p-10 text-center">
+        <div className="my-10">
+          <h1 className="font-bold text-4xl">Login Page</h1>
         </div>
         <div className="">
-          <form action="" className="flex-col">
+          <form onSubmit={handleSubmit} className="flex-col">
             <Input
               type="text"
               placeholder="Enter your email"
               label="Enter your Email"
               className="mb-4 w-full"
               name="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
             <Input
               type="password"
@@ -23,6 +67,8 @@ export default function page() {
               label="Enter your password"
               className="mb-4"
               name="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
             <Button
               type="submit"
@@ -32,10 +78,16 @@ export default function page() {
             >
               Login
             </Button>
+            {error && <p className="text-red-500">{error}</p>}
           </form>
-          you don't have an account? <a href="/auth/register" className=" text-blue-600">Register</a>
+          you don't have an account?{" "}
+          <a href="/auth/register" className="text-blue-600">
+            Register
+          </a>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default Page;

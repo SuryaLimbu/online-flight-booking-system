@@ -7,6 +7,7 @@ import Providers from "./providers";
 import TopNavbar from "@/components/ui/navbar";
 import { useState, useEffect, Suspense } from "react";
 
+
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -22,13 +23,15 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className}`}>
-      <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div>Loading...</div>}>
           <Providers>
-            <TopNavbar />
-            <main className="flex min-h-screen flex-col sm:p-24 p-4">
-              {children}
-            </main>
-            {/* <Footer /> */}
+         
+              <TopNavbar />
+              <main className="flex min-h-screen flex-col sm:p-24 p-4">
+                {children}
+              </main>
+              {/* <Footer /> */}
+        
           </Providers>
         </Suspense>
       </body>

@@ -1,5 +1,5 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Navbar,
   NavbarBrand,
@@ -10,12 +10,25 @@ import {
   NavbarMenuItem,
   Link,
   Button,
+  Avatar,
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownTrigger,
 } from "@nextui-org/react";
+import { deleteCookie, getCookie } from "@/utils/cookies";
 
 // import {AcmeLogo} from "./AcmeLogo.jsx";
 
-export default function TopNavbar() {
-  const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+const TopNavbar: React.FC = () => {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [userId, setUserId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    if (getCookie("userId")) {
+      setUserId(getCookie("userId"));
+    }
+  }, []);
 
   const menuItems = [
     "Profile",
@@ -29,6 +42,15 @@ export default function TopNavbar() {
     "Help & Feedback",
     "Log Out",
   ];
+  // const userROle = getCookie("userRole");
+  // alert("userROle:"+ getCookie("userRole"));
+
+  const logoutHandle = () => {
+    deleteCookie("userId");
+    deleteCookie("usermail");
+    deleteCookie("userRole");
+    window.location.href = "/auth/login";
+  };
 
   return (
     <Navbar onMenuOpenChange={setIsMenuOpen}>
@@ -38,11 +60,9 @@ export default function TopNavbar() {
           className="sm:hidden"
         />
         <NavbarBrand>
-          {/* <AcmeLogo /> */}
-          <a href="/" className="font-bold text-inherit">{process.env.NEXT_PUBLIC_SITE_TITLE}</a>
-          {/* <p >
+          <a href="/" className="font-bold text-inherit">
             {process.env.NEXT_PUBLIC_SITE_TITLE}
-          </p> */}
+          </a>
         </NavbarBrand>
       </NavbarContent>
 
@@ -64,14 +84,63 @@ export default function TopNavbar() {
         </NavbarItem>
       </NavbarContent>
       <NavbarContent justify="end">
-        <NavbarItem className="hidden lg:flex">
-          <Link href="#">Login</Link>
-        </NavbarItem>
-        <NavbarItem>
-          <Button as={Link} color="primary" href="#" variant="flat">
-            Register
-          </Button>
-        </NavbarItem>
+        {userId ? (
+          <NavbarContent as="div" justify="end">
+            <Dropdown placement="bottom-end">
+              <DropdownTrigger>
+                <Avatar
+                  isBordered
+                  as="button"
+                  className="transition-transform"
+                  color="secondary"
+                  name="Jason Hughes"
+                  size="sm"
+                  src="https://i.pravatar.cc/150?u=a042581f4e29026704d"
+                />
+              </DropdownTrigger>
+              <DropdownMenu aria-label="Profile Actions" variant="flat">
+                <DropdownItem key="profile" className="h-14 gap-2">
+                  <p className="font-semibold">Signed in as</p>
+                  <p className="font-semibold">{getCookie("usermail")}</p>
+                </DropdownItem>
+                <DropdownItem key="dashboard" href="/dashboard">
+                  Dashboard
+                </DropdownItem>
+                <DropdownItem key="settings">My Settings</DropdownItem>
+                <DropdownItem key="team_settings">Team Settings</DropdownItem>
+                <DropdownItem key="analytics">Analytics</DropdownItem>
+                <DropdownItem key="system">System</DropdownItem>
+                <DropdownItem key="configurations">Configurations</DropdownItem>
+                <DropdownItem key="help_and_feedback">
+                  Help & Feedback
+                </DropdownItem>
+                <DropdownItem
+                  key="logout"
+                  color="danger"
+                  onClick={logoutHandle}
+                >
+                  Log Out
+                </DropdownItem>
+              </DropdownMenu>
+            </Dropdown>
+          </NavbarContent>
+        ) : (
+          <>
+            <NavbarItem className="hidden lg:flex">
+              <Link href="/auth/login">Login</Link>
+            </NavbarItem>
+            <NavbarItem>
+              <Button
+                as={Link}
+                color="primary"
+                href="/auth/register"
+                variant="flat"
+              >
+                Register
+              </Button>
+            </NavbarItem>
+          </>
+        )}
       </NavbarContent>
       <NavbarMenu>
         {menuItems.map((item, index) => (
@@ -95,4 +164,6 @@ export default function TopNavbar() {
       </NavbarMenu>
     </Navbar>
   );
-}
+};
+
+export default TopNavbar;
