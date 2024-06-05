@@ -18,7 +18,14 @@ module.exports = {
         light: {
           colors: {
             primary: {
-              DEFAULT: "#0d9488",
+              // DEFAULT: "#04125c",
+              DEFAULT: "#1941BA",
+              
+              foreground: "#000000",
+            },
+            secondary: {
+              // DEFAULT: "#1941BA",
+              DEFAULT: "#04125c",
               foreground: "#000000",
             },
             focus: "#BEF264",

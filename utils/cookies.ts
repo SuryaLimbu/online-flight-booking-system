@@ -26,3 +26,7 @@ export function getArrayCookie(name: string): any[] | undefined {
 //   alert(`Getting array cookie: ${name} = ${cookie}`);
   return cookie ? JSON.parse(cookie) : undefined;
 }
+
+export const deleteCookie = (name: string): void => {
+  document.cookie = `${name}=; Max-Age=0; path=/; domain=${window.location.hostname}`;
+};
