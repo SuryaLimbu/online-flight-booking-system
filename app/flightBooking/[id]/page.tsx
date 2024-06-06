@@ -465,6 +465,7 @@ export default function Page() {
           value={numberOfPassengers}
           onChange={handleNumberOfPassengers}
           label="Number of Passengers"
+          isRequired={true}
         >
           <SelectItem value={1} key={1}>
             1
@@ -490,6 +491,7 @@ export default function Page() {
           value={selectedClass}
           onChange={handleClassSelection}
           label="Class"
+          isRequired={true}
         >
           <SelectItem value={"all"} key={"all"}>
             All Classes

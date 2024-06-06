@@ -56,6 +56,7 @@ export const getBookedSeatIdsByFlight = async (req: Request) => {
     throw error;
   }
 };
+
 export const getBookingById = async (req: Request) => {
   try {
     const url = new URL(req.url);
@@ -72,6 +73,47 @@ export const getBookingById = async (req: Request) => {
       );
     }
     const booking = await Booking.findById(id);
+    return new Response(JSON.stringify(booking), {
+      status: 200,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  } catch (error) {
+    return new Response(JSON.stringify(error), {
+      status: 500,
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+  }
+};
+export const getBookingByIdwithPopulate = async (req: Request) => {
+  try {
+    const url = new URL(req.url);
+    // console.log(req);
+    const id = url.pathname.split("/").pop();
+    // console.log(id);
+    if (!id) {
+      return new Response(
+        JSON.stringify({ message: "Section ID is required" }),
+        {
+          status: 400,
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+    }
+    const booking = await Booking.findById(id)
+      .populate("seatId")
+      .populate("aircraftId")
+      .populate({
+        path: "flightId",
+        populate: { path: "departureAirport" },
+      })
+      .populate({
+        path: "flightId",
+        populate: { path: "arrivalAirport" },
+      });
     return new Response(JSON.stringify(booking), {
       status: 200,
       headers: {

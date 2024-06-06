@@ -2,8 +2,13 @@
 import ProgressBar from "@/app/components/flights/progressBar";
 import { getCookie } from "@/utils/cookies";
 import { Button } from "@nextui-org/react";
+import { useParams } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { PiAirplaneTakeoff, PiAirplane, PiAirplaneLanding } from "react-icons/pi";
+import {
+  PiAirplaneTakeoff,
+  PiAirplane,
+  PiAirplaneLanding,
+} from "react-icons/pi";
 
 interface IPassenger {
   _id: string;
@@ -59,10 +64,14 @@ interface IBooking {
 export default function Page() {
   const [bookingData, setBookingData] = useState<IBooking[]>([]);
   const userId = getCookie("userId");
+  const {id} = useParams();
+  
+
 
   useEffect(() => {
     const fetchAPI = async () => {
       const response = await fetch(
+        // `${process.env.NEXT_PUBLIC_API_URL}/bookings/populateId/${id}`
         `${process.env.NEXT_PUBLIC_API_URL}/bookings/userId/${userId}`
       );
       const data = await response.json();
@@ -70,6 +79,8 @@ export default function Page() {
     };
     fetchAPI();
   }, [userId]);
+
+  // console.log(bookingData)
 
   if (!bookingData.length) {
     return <div>Loading...</div>;
@@ -89,7 +100,8 @@ export default function Page() {
   const handleCancelBooking = async () => {
     const currentTime = new Date();
     const departureTime = new Date(bookingData[0].flightId.departureTime);
-    const timeDifference = (departureTime.getTime() - currentTime.getTime()) / (1000 * 3600);
+    const timeDifference =
+      (departureTime.getTime() - currentTime.getTime()) / (1000 * 3600);
 
     if (timeDifference > 72) {
       if (window.confirm("Are you sure you want to release this seat?")) {
@@ -102,7 +114,9 @@ export default function Page() {
 
         if (response.ok) {
           window.alert("Booking canceled successfully!");
-          setBookingData((prevData) => prevData.filter((booking) => booking._id !== bookingData[0]._id));
+          setBookingData((prevData) =>
+            prevData.filter((booking) => booking._id !== bookingData[0]._id)
+          );
         } else {
           window.alert("Failed to cancel booking!");
         }

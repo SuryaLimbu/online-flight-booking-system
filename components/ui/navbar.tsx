@@ -30,6 +30,7 @@ const TopNavbar: React.FC = () => {
   // console.log('userId', getCookie('userId'));
 
   const menuItems = [
+    
     "Profile",
     "Dashboard",
     "Activity",
@@ -59,7 +60,7 @@ const TopNavbar: React.FC = () => {
           className="sm:hidden"
         />
         <NavbarBrand>
-          <a href="/" className="font-bold text-inherit hidden sm:block">
+          <a href="/" className="font-bold text-inherit">
             {process.env.NEXT_PUBLIC_SITE_TITLE}
           </a>
         </NavbarBrand>
