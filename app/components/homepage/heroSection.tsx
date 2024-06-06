@@ -207,7 +207,7 @@ const HeroSection: React.FC = () => {
                   </RadioGroup>
                 </div>
                 <form
-                  className="space-y-4 sm:flex sm:gap-x-4 gap-y-4  items-center"
+                  className="space-y-4 sm:flex sm:gap-x-4 gap-y-4 justify-between items-center"
                   onSubmit={handleSubmit}
                 >
                   <Select
@@ -218,6 +218,7 @@ const HeroSection: React.FC = () => {
                     className="w-full sm:max-w-xs"
                     value={formValues.from}
                     onChange={handleInputChange}
+                    isRequired={true}
                   >
                     {airports.map((airport) => (
                       <SelectItem key={airport._id}>
@@ -234,6 +235,7 @@ const HeroSection: React.FC = () => {
                     className="w-full sm:max-w-xs"
                     value={formValues.to}
                     onChange={handleInputChange}
+                    isRequired={true}
                   >
                     {airports.map((airport) => (
                       <SelectItem key={airport._id}>
@@ -248,6 +250,7 @@ const HeroSection: React.FC = () => {
                     name="departureDate"
                     value={formValues.departureDate}
                     onChange={handleInputChange}
+                    isRequired={true}
                   />
 
                   <Select
@@ -259,6 +262,7 @@ const HeroSection: React.FC = () => {
                     // defaultSelectedKeys={["Economy"]}
                     value={formValues.cabinClass}
                     onChange={handleInputChange}
+                    isRequired={true}
                   >
                     {(cabinClass) => (
                       <SelectItem key={cabinClass.value}>
@@ -420,6 +424,67 @@ const HeroSection: React.FC = () => {
                     </div>
                   </div>
                 </div>
+                  <div className="bg-green-200 p-4 my-4 rounded-xl">
+                  <h1>Available flight</h1>
+                  <div>
+                    <div className="sm:flex justify-between space-y-4 items-center">
+                      <div>
+                        <span className=" font-semibold">
+                          Departure Airport
+                        </span>
+                        <br />
+                        <span>Heathrow</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Arrival Airport</span>
+                        <br />
+                        <span>Kathmandu</span>
+                      </div>
+
+                      <div>
+                        <span className=" font-semibold">Departure Date</span>
+                        <br />
+                        <span>May/26/2024</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Cabin Class</span>
+                        <br />
+                        <span>any</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="bg-green-200 p-4 my-4 rounded-xl">
+                  <h1>Available flight</h1>
+                  <div>
+                    <div className="sm:flex justify-between space-y-4 items-center">
+                      <div>
+                        <span className=" font-semibold">
+                          Departure Airport
+                        </span>
+                        <br />
+                        <span>Kathmandu</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Arrival Airport</span>
+                        <br />
+                        <span>Suketar</span>
+                      </div>
+
+                      <div>
+                        <span className=" font-semibold">Departure Date</span>
+                        <br />
+                        <span>May/26/2024</span>
+                      </div>
+                      <div>
+                        <span className=" font-semibold">Cabin Class</span>
+                        <br />
+                        <span>any</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
               </CardBody>
             </Card>
           </Tab>

@@ -76,7 +76,7 @@ export default function Page() {
 
   return (
     <div className="flex h-screen justify-center items-center">
-      <div className="border flex-col w-2/4 items-center justify-center rounded-lg p-10 text-center">
+      <div className="border flex-col sm:w-2/4 items-center justify-center rounded-lg p-10 text-center">
         <div className="my-10">
           <h1 className="font-bold text-4xl">Register Page</h1>
         </div>
