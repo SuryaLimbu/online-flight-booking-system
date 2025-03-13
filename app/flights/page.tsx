@@ -9,6 +9,7 @@ import {
   PiAirplaneLanding,
 } from "react-icons/pi";
 import ProgressBar from "../components/flights/progressBar";
+import Airport from "@/models/Airport";
 
 // Define the type for flight data
 interface Flight {
@@ -16,10 +17,13 @@ interface Flight {
   flightNumber: string;
   departureAirport: {
     airportName: string;
+    airportCode: string;
   };
   arrivalAirport: {
     airportName: string;
+    airportCode: string;
   };
+  arrivalTime: string;
   departureTime: string;
   cabinClass: string;
 }
@@ -55,70 +59,87 @@ const Flights = () => {
       .then((data) => setFlights(data));
   }, [from, to, departureDate, cabinClass, totalTravelers]);
 
-  // console.log("flights:", flights);
+  console.log("flights:", flights);
 
   return (
     <div>
       <div>
         <ProgressBar progress={1} />
-        <div className="flex justify-between items-center text-primary">
-          <div className="">
-            <span>Kathmandu</span>
-            <br />
-            <span className=" font-bold text-2xl">KTM</span>
-            <br />
-            <span className="text-4xl">
-              <PiAirplaneTakeoff />
-            </span>
-          </div>
-          <div className="flex items-center">
-            <span className="text-3xl mx-4">-----</span>
-            <span>
-              <PiAirplane className=" rotate-90 text-3xl" />
-            </span>
-            <span className="text-3xl mx-4">-----</span>
-          </div>
-          <div>
-            <span>London</span>
-            <br />
-            <span className=" font-bold text-2xl">LHR</span>
-            <br />
-            <span className="text-4xl">
-              <PiAirplaneLanding />
-            </span>
-          </div>
-        </div>
       </div>
 
       <div>
         <h1 className="text-4xl font-extrabold text-center py-10 text-primary">
           Active Flights
         </h1>
-        <ul>
-          {flights.length > 0 ? (
-            flights.map((flight) => (
-              <li key={flight._id} className="border  p-4 rounded-xl">
-                <a href={`/flightBooking/${flight._id}`}>
-                  <div>Airline: {flight.flightNumber}</div>
-                  {/* <div>Price: {flight.price}</div> */}
+
+        {flights.length > 0 ? (
+          flights.map((flight) => (
+            <a href={`/flightBooking/${flight._id}`}>
+              <div className="flex justify-between items-center text-primary border rounded-3xl p-6">
+                <div className="flex space-x-6">
                   <div>
-                    Departure Airport: {flight.departureAirport.airportName}
+                    <span className="text-6xl">
+                      <PiAirplaneTakeoff />
+                    </span>
+                  </div>
+                  <div className="">
+                    <span>{flight.departureAirport.airportName}</span>
+                    <br />
+                    <span className=" font-bold text-4xl">
+                      {flight.departureAirport.airportCode}
+                    </span>
+                    <br />
+                    <span>{flight.departureTime}</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center opacity-50">
+                  <span className="text-3xl mx-4">-----</span>
+                  <span>
+                    <PiAirplane className=" rotate-90 text-3xl" />
+                  </span>
+                  <span className="text-3xl mx-4">-----</span>
+                </div>
+                <div className="flex space-x-6">
+                  <div>
+                    <span className="text-6xl">
+                      <PiAirplaneLanding />
+                    </span>
                   </div>
                   <div>
-                    Arrival Airport: {flight.arrivalAirport.airportName}
+                    <span>{flight.arrivalAirport.airportName}</span>
+                    <br />
+                    <span className=" font-bold text-4xl">
+                      {flight.arrivalAirport.airportCode}
+                    </span>
+                    <br />
+
+                    <span>{flight.arrivalTime}</span>
                   </div>
-                  <div>
-                    Departure Date:{" "}
-                    {new Date(flight.departureTime).toDateString()}
-                  </div>
-                  <div>Cabin Class: {flight.cabinClass}</div>
-                </a>
-              </li>
-            ))
-          ) : (
-            <li>No flights available</li>
-          )}
-        </ul>
+                </div>
+              </div>
+            </a>
+            // <li key={flight._id} className="border  p-4 rounded-xl">
+            //   <a href={`/flightBooking/${flight._id}`}>
+            //     <div className="text-3xl font-bold">Airline: {flight.flightNumber}</div>
+            //     {/* <div>Price: {flight.price}</div> */}
+            //     <div>
+            //       Departure Airport: {}
+            //     </div>
+            //     <div>
+            //       Arrival Airport: {flight.arrivalAirport.airportName}
+            //     </div>
+            //     <div>
+            //       Departure Date:{" "}
+            //       {new Date(flight.departureTime).toDateString()}
+            //     </div>
+            //     <div>Cabin Class: {flight.cabinClass}</div>
+            //   </a>
+            // </li>
+          ))
+        ) : (
+          <li>No flights available</li>
+        )}
       </div>
     </div>
   );

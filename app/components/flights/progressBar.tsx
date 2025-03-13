@@ -12,8 +12,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
         <div className="flex-1"></div>
 
         <div className="flex-1">
-          <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center">
-            <span className="text-white text-center w-full">
+          <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center justify-center">
+            <span className="text-white text-center">
               <PiCheck />
             </span>
           </div>
@@ -28,8 +28,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
         <div className="flex-1">
           <div>
             {progress > 1 ? (
-              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center">
-                <span className="text-white text-center w-full">
+              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center justify-center">
+                <span className="text-white text-center ">
                   <PiCheck />
                 </span>
               </div>
@@ -56,8 +56,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
         <div className="flex-1">
           <div>
             {progress > 2 ? (
-              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center">
-                <span className="text-white text-center w-full">
+              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center justify-center">
+                <span className="text-white text-center">
                   <PiCheck />
                 </span>
               </div>
@@ -84,8 +84,8 @@ const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {
         <div className="flex-1">
           <div>
             {progress > 3 ? (
-              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center">
-                <span className="text-white text-center w-full">
+              <div className="w-10 h-10 bg-primary mx-auto rounded-full text-lg text-white flex items-center justify-center">
+                <span className="text-white text-center ">
                   <PiCheck />
                 </span>
               </div>

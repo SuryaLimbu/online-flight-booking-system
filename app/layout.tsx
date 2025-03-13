@@ -25,7 +25,7 @@ export default function RootLayout({
         <Suspense fallback={<div>Loading...</div>}>
           <Providers>
             <TopNavbar />
-            <main className="flex min-h-screen flex-col sm:p-24 p-4">
+            <main className="flex min-h-screen flex-col mx-6 sm:mx-20 my-4">
               {children}
             </main>
             {/* <Footer /> */}

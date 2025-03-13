@@ -53,20 +53,20 @@ const TopNavbar: React.FC = () => {
   };
 
   return (
-    <Navbar onMenuOpenChange={setIsMenuOpen}>
+    <Navbar onMenuOpenChange={setIsMenuOpen} className="">
       <NavbarContent>
         <NavbarMenuToggle
           aria-label={isMenuOpen ? "Close menu" : "Open menu"}
           className="sm:hidden"
         />
         <NavbarBrand>
-          <a href="/" className="font-bold text-inherit">
+          <a href="/" className="font-bold text-inherit text-sm sm:text-lg">
             {process.env.NEXT_PUBLIC_SITE_TITLE}
           </a>
         </NavbarBrand>
       </NavbarContent>
 
-      <NavbarContent className="hidden sm:flex gap-4" justify="center">
+      <NavbarContent className="hidden sm:flex gap-6 font-semibold" justify="start">
         <NavbarItem>
           {userId ? (
             <Link color="foreground" href="/booking/list">
@@ -77,13 +77,18 @@ const TopNavbar: React.FC = () => {
           )}
         </NavbarItem>
         <NavbarItem isActive>
-          <Link href="#" aria-current="page">
-            Customers
+          <Link href="/" aria-current="page">
+            Home
+          </Link>
+        </NavbarItem>
+        <NavbarItem >
+          <Link href="#"  color="foreground">
+            Places
           </Link>
         </NavbarItem>
         <NavbarItem>
           <Link color="foreground" href="#">
-            Integrations
+            About Us
           </Link>
         </NavbarItem>
       </NavbarContent>
